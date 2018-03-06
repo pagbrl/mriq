@@ -63,7 +63,6 @@ class DefaultController extends Controller
         DriverManager::loadDriver(SlackDriver::class);
         $botman = BotManFactory::create($config, null, $request);
 
-
         $logger->debug($botman->getUser()->getUsername());
 
         $botman->hears('hi', function (BotMan $bot) use ($logger) {
