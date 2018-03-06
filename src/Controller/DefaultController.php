@@ -11,8 +11,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Zend\Http\Response;
 
 class DefaultController extends Controller
 {
@@ -51,27 +51,28 @@ class DefaultController extends Controller
      */
     public function treatAction(LoggerInterface $logger, Request $request)
     {
-        // Create a BotMan instance, using the WebDriver
-        DriverManager::loadDriver(SlackDriver::class);
-
+        $slackToken = $this->getParameter('slack_token');
+        $logger->debug($slackToken);
         $config = [
             'slack' => [
-                'token' => $this->getParameter('slack_token')
+                'token' => $slackToken
             ]
         ];
 
-        $botman = BotManFactory::create($config); //No config options required
+        // Create a BotMan instance, using the WebDriver
+        DriverManager::loadDriver(SlackDriver::class);
+        $botman = BotManFactory::create($config, null, $request);
+
 
         $logger->debug($botman->getUser()->getUsername());
 
-        $botman->hears('/treat', function (BotMan $bot) {
+        $botman->hears('hi', function (BotMan $bot) use ($logger) {
+            $logger->debug('hi coucou');
             $bot->reply(sprintf(
                 'I heard you %s ! :)',
                 $bot->getUser()->getUsername()
             ));
         });
-
-
 
         //Send empty response (Botman has already sent the output itself - https://github.com/botman/botman/issues/342)
         return new Response();
