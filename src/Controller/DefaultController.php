@@ -39,7 +39,7 @@ class DefaultController extends Controller
         $loop = Factory::create();
         $botman = BotManFactory::createForRTM([
             'slack' => [
-                'token' => 'YOUR-SLACK-BOT-TOKEN',
+                'token' => $this->getParameter('slack_token'),
             ],
         ], $loop);
 
@@ -65,11 +65,13 @@ class DefaultController extends Controller
         $loop = Factory::create();
         $botman = BotManFactory::createForRTM([
             'slack' => [
-                'token' => 'YOUR-SLACK-BOT-TOKEN',
+                'token' => $this->getParameter('slack_token'),
             ],
         ], $loop);
 
-        $botman->hears('treat', function ($bot) {
+        /** @var Botman $botman */
+        $botman->hears('treat', function (Botman $bot) use ($logger) {
+            $logger->debug($bot->getUser()->getUsername());
             $username = $bot->getUser()->getUsername();
             $bot->reply(sprintf('I heard you %s', $username));
         });
