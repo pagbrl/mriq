@@ -7,7 +7,9 @@ use BotMan\BotMan\BotManFactory;
 use BotMan\BotMan\Drivers\DriverManager;
 use BotMan\BotMan\Middleware\ApiAi;
 use BotMan\Drivers\Slack\SlackDriver;
+use BotMan\Drivers\Slack\SlackRTMDriver;
 use Psr\Log\LoggerInterface;
+use React\EventLoop\Factory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,16 +33,22 @@ class DefaultController extends Controller
      */
     public function messageAction(Request $request)
     {
-        // Create a BotMan instance, using the WebDriver
-        DriverManager::loadDriver(SlackDriver::class);
+        // Load driver
+        DriverManager::loadDriver(SlackRTMDriver::class);
 
-        $config = [
+        $loop = Factory::create();
+        $botman = BotManFactory::createForRTM([
             'slack' => [
-                'token' => $this->getParameter('slack_token')
-            ]
-        ];
+                'token' => 'YOUR-SLACK-BOT-TOKEN',
+            ],
+        ], $loop);
 
-        $botman = BotManFactory::create($config); //No config options required
+        $botman->hears('treat', function ($bot) {
+            $username = $bot->getUser()->getUsername();
+            $bot->reply(sprintf('I heard you %s', $username));
+        });
+
+        $loop->run();
 
         //Send empty response (Botman has already sent the output itself - https://github.com/botman/botman/issues/342)
         return new Response();
@@ -51,27 +59,22 @@ class DefaultController extends Controller
      */
     public function treatAction(LoggerInterface $logger, Request $request)
     {
-        $slackToken = $this->getParameter('slack_token');
-        $logger->debug($slackToken);
-        $config = [
+        // Load driver
+        DriverManager::loadDriver(SlackRTMDriver::class);
+
+        $loop = Factory::create();
+        $botman = BotManFactory::createForRTM([
             'slack' => [
-                'token' => $slackToken
-            ]
-        ];
+                'token' => 'YOUR-SLACK-BOT-TOKEN',
+            ],
+        ], $loop);
 
-        // Create a BotMan instance, using the WebDriver
-        DriverManager::loadDriver(SlackDriver::class);
-        $botman = BotManFactory::create($config, null, $request);
-
-        $logger->debug($botman->getUser()->getUsername());
-
-        $botman->hears('hi', function (BotMan $bot) use ($logger) {
-            $logger->debug('hi coucou');
-            $bot->reply(sprintf(
-                'I heard you %s ! :)',
-                $bot->getUser()->getUsername()
-            ));
+        $botman->hears('treat', function ($bot) {
+            $username = $bot->getUser()->getUsername();
+            $bot->reply(sprintf('I heard you %s', $username));
         });
+
+        $loop->run();
 
         //Send empty response (Botman has already sent the output itself - https://github.com/botman/botman/issues/342)
         return new Response();
