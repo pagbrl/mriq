@@ -64,7 +64,7 @@ class SlackManager
             'text' => $text,
             'user' => $userId,
             'as_user' => false
-        ));
+        ))->getBody()->getContents();
     }
 
     public function sendMessage()

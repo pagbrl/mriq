@@ -159,9 +159,21 @@ class MriqManager
      */
     public function parseSlackTreatText(string $input)
     {
-        return array(
-            'giver' => null,
-            'amount' => 0
-        );
+        preg_match('/^<@([^|]*)[^>]*> (\d) (.*)/', $input, $matches, PREG_OFFSET_CAPTURE);
+
+        if (count($matches) == 4) {
+            $user = $this->em->getRepository(User::class)->findUserBySlackId($matches[1]);
+            if (null == $user) {
+                $user = $this->registerMissingUser($matches[1]);
+            }
+
+            return array(
+                'user' => $user,
+                'amount' => (int) $matches[2],
+                'reason' => $matches[3]
+            );
+        } else {
+            throw new \Exception('Whooops, I did\'nt quite get what you tried to say here 🙉');
+        }
     }
 }

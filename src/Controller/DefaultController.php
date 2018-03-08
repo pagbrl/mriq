@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Manager\MriqManager;
 use App\Manager\SlackManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,13 +29,16 @@ class DefaultController extends Controller
     /**
      * @Route("/treat", name="treat")
      */
-    public function messageAction(
+    public function treatAction(
+        LoggerInterface $logger,
         EntityManagerInterface $em,
         MriqManager $mriqManager,
         SlackManager $slackManager,
         Request $request
     ) {
         $slackPayload = $request->request->all();
+
+        $logger->debug(json_encode($slackPayload));
 
         try {
             $giver = $em->getRepository(User::class)->findUserBySlackId($slackPayload['user_id']);
@@ -44,8 +48,6 @@ class DefaultController extends Controller
             }
 
             $parsedData = $mriqManager->parseSlackTreatText($slackPayload['text']);
-
-            throw new \Exception('Testing ephemeral');
 
 
         } catch (\Exception $e) {
@@ -63,7 +65,7 @@ class DefaultController extends Controller
     /**
      * @Route("/mriq", name="mriq")
      */
-    public function treatAction(Request $request)
+    public function mriqAction(Request $request)
     {
 
         //Send empty response (Botman has already sent the output itself - https://github.com/botman/botman/issues/342)
