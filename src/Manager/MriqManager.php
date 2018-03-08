@@ -162,15 +162,15 @@ class MriqManager
         preg_match('/^<@([^|]*)[^>]*> (\d) (.*)/', $input, $matches, PREG_OFFSET_CAPTURE);
 
         if (count($matches) == 4) {
-            $user = $this->em->getRepository(User::class)->findUserBySlackId($matches[1]);
+            $user = $this->em->getRepository(User::class)->findUserBySlackId($matches[1][0]);
             if (null == $user) {
                 $user = $this->registerMissingUser($matches[1]);
             }
 
             return array(
                 'user' => $user,
-                'amount' => (int) $matches[2],
-                'reason' => $matches[3]
+                'amount' => (int) $matches[2][0],
+                'reason' => $matches[3][0]
             );
         } else {
             throw new \Exception('Whooops, I did\'nt quite get what you tried to say here 🙉');

@@ -49,6 +49,15 @@ class DefaultController extends Controller
 
             $parsedData = $mriqManager->parseSlackTreatText($slackPayload['text']);
 
+            $string = sprintf(
+                '%s gave %s %s mriqs because : %s',
+                $giver->getSlackName(),
+                $parsedData['amount'],
+                $parsedData['user']->getSlackName(),
+                $parsedData['reason']
+            );
+            $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $string, $giver->getSlackId());
+
 
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : $e->getMessage();
