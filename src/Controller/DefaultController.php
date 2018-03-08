@@ -136,7 +136,8 @@ class DefaultController extends Controller
                 'Hey *@%s*, you currently have %smq left to give and received %smq ! 
                 \nTime to spread some love 💖',
                 $user->getSlackName(),
-                $user->getToGive()
+                $user->getToGive(),
+                $user->getTotalEarned()
             );
 
             $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $string, $user->getSlackName());
