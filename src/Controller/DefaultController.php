@@ -2,6 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Manager\MriqManager;
+use App\Manager\SlackManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,9 +28,34 @@ class DefaultController extends Controller
     /**
      * @Route("/treat", name="treat")
      */
-    public function messageAction(LoggerInterface $logger, Request $request)
-    {
-        $logger->debug(json_encode($request->request->all()));
+    public function messageAction(
+        EntityManagerInterface $em,
+        MriqManager $mriqManager,
+        SlackManager $slackManager,
+        Request $request
+    ) {
+        $slackPayload = $request->request->all();
+
+        try {
+            $giver = $em->getRepository(User::class)->findUserBySlackId($slackPayload['user_id']);
+
+            if (null == $giver) {
+                $giver = $mriqManager->registerMissingUser($slackPayload['user_id']);
+            }
+
+            $parsedData = $mriqManager->parseSlackTreatText($slackPayload['text']);
+
+            throw new \Exception('Testing ephemeral');
+
+
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : $e->getMessage();
+            $slackManager->sendEphemeralMessage(
+                $slackPayload['channel_id'],
+                $errorMessage,
+                $slackPayload['user_id']
+            );
+        }
 
         return new Response();
     }

@@ -56,4 +56,19 @@ class SlackManager
     {
         return $this->call('users.list');
     }
+
+    public function sendEphemeralMessage(string $to, string $text, string $userId)
+    {
+        return $this->call('chat.postEphemeral', array(
+            'channel' => $to,
+            'text' => $text,
+            'user' => $userId,
+            'as_user' => false
+        ));
+    }
+
+    public function sendMessage()
+    {
+
+    }
 }

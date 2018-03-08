@@ -63,14 +63,15 @@ class MriqManager
                     $user = $existingUser;
                     $results['known'][] = $rawUser['name'];
                 } else {
-                    $user = new User();
+                    $user = (new User())->setToGive(6);
                     $results['added'][] = $rawUser['name'];
                 }
 
                 $user
                     ->setSlackId($rawUser['id'])
                     ->setSlackName($rawUser['name'])
-                    ->setSlackRealName($rawUser['profile']['real_name_normalized']);
+                    ->setSlackRealName($rawUser['profile']['real_name_normalized'])
+                ;
 
                 $this->em->persist($user);
             }
@@ -78,6 +79,16 @@ class MriqManager
         $this->em->flush();
 
         return $results;
+    }
+
+    public function registerMissingUser(string $userId)
+    {
+        $this->updateUsersList();
+        $user = $this->em->getRepository(User::class)->findUserBySlackId($userId);
+        if (null == $user) {
+            throw new \Exception('Sorry, an error happened. I don\'t know you 🙊');
+        }
+        return $user;
     }
 
     /**
@@ -140,5 +151,17 @@ class MriqManager
                 'Whooooops, you don\'t have enough mriqs to be this generous at the moment 💸, sorry 😢.'
             );
         }
+    }
+
+    /**
+     * @param string $input
+     * @return array
+     */
+    public function parseSlackTreatText(string $input)
+    {
+        return array(
+            'giver' => null,
+            'amount' => 0
+        );
     }
 }
