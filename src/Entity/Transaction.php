@@ -45,6 +45,12 @@ class Transaction
     private $reason;
 
     /**
+     * @var bool
+     * @ORM\Column(type="boolean", nullable=false)
+     */
+    private $wereLastMriqs = false;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -131,6 +137,24 @@ class Transaction
     public function setReason(string $reason): Transaction
     {
         $this->reason = $reason;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getWereLastMriqs(): bool
+    {
+        return $this->wereLastMriqs;
+    }
+
+    /**
+     * @param bool $wereLastBriqs
+     * @return Transaction
+     */
+    public function setWereLastMriqs(bool $wereLastMriqs): Transaction
+    {
+        $this->wereLastMriqs = $wereLastMriqs;
         return $this;
     }
 }

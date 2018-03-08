@@ -67,8 +67,12 @@ class SlackManager
         ))->getBody()->getContents();
     }
 
-    public function sendMessage()
+    public function sendMessage(string $to, string $text)
     {
-
+        return $this->call('chat.postMessage', array(
+            'channel' => $to,
+            'text' => $text,
+            'as_user' => false
+        ))->getBody()->getContents();
     }
 }

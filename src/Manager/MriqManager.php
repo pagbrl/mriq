@@ -96,7 +96,7 @@ class MriqManager
      * @param User $receiver
      * @param int $amount
      * @param string $reason
-     * @return array
+     * @return Transaction
      * @throws \Exception
      */
     public function treatMriqs(User $giver, User $receiver, int $amount, string $reason)
@@ -131,7 +131,9 @@ class MriqManager
                 ->setReason($reason)
                 ->setAmount($amount)
                 ->setGiver($giver)
-                ->setReceiver($receiver);
+                ->setReceiver($receiver)
+                ->setWereLastMriqs($gaveLastMriqs)
+            ;
 
             $receiver->receiveBriqs($amount);
             $giver->giveBriqs($amount);
@@ -142,10 +144,7 @@ class MriqManager
 
             $this->em->flush();
 
-            return array(
-                'success' => true,
-                'last' => $gaveLastMriqs
-            );
+            return $transaction;
         } else {
             throw new \Exception(
                 'Whooooops, you don\'t have enough mriqs to be this generous at the moment 💸, sorry 😢.'

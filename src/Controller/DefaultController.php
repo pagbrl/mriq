@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Transaction;
 use App\Entity\User;
 use App\Manager\MriqManager;
 use App\Manager\SlackManager;
@@ -30,15 +31,12 @@ class DefaultController extends Controller
      * @Route("/treat", name="treat")
      */
     public function treatAction(
-        LoggerInterface $logger,
         EntityManagerInterface $em,
         MriqManager $mriqManager,
         SlackManager $slackManager,
         Request $request
     ) {
         $slackPayload = $request->request->all();
-
-        $logger->debug(json_encode($slackPayload));
 
         try {
             $giver = $em->getRepository(User::class)->findUserBySlackId($slackPayload['user_id']);
@@ -47,18 +45,63 @@ class DefaultController extends Controller
                 $giver = $mriqManager->registerMissingUser($slackPayload['user_id']);
             }
 
+            $mriqChannelId = $this->getParameter('mriq_channel_id');
+
             $parsedData = $mriqManager->parseSlackTreatText($slackPayload['text']);
+            /** @var User $receiver */
+            $receiver = $parsedData['user'];
+            /** @var int $amount */
+            $amount = $parsedData['amount'];
+            /** @var string $reason */
+            $reason = $parsedData['reason'];
 
-            $string = sprintf(
-                '%s gave %s %s mriqs because : %s',
+            /** @var Transaction $transaction */
+            $transaction = $mriqManager->treatMriqs($giver, $receiver, $amount, $reason);
+
+            $confirmGiverString = $transaction->getWereLastMriqs() ?
+                sprintf(
+                    'You gave your last *%s* mriqs to *@%s* ! Thanks for spreading the love 💌',
+                    $amount,
+                    $receiver->getSlackName()
+                )
+                :
+                sprintf(
+                    'You gave *%s* mriqs to *@%s* ! Thanks for spreading the love 💌',
+                    $amount,
+                    $receiver->getSlackName()
+                );
+
+            $confirmReceiverString = $transaction->getWereLastMriqs() ?
+                sprintf(
+                    'You just received *%s* mriqs from *@%s* : _%s_ ',
+                    $amount,
+                    $giver->getSlackName(),
+                    $reason
+                )
+                :
+                sprintf(
+                    '*%s* just gave you their last *%s* mriqs : _%s_',
+                    $giver->getSlackName(),
+                    $amount,
+                    $reason
+                );
+
+            $logToMriqChannelString = sprintf(
+                '*@s%* gave %smq to *@%s% \n > %s',
                 $giver->getSlackName(),
-                $parsedData['amount'],
-                $parsedData['user']->getSlackName(),
-                $parsedData['reason']
+                $amount,
+                $receiver->getSlackName(),
+                $reason
             );
-            $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $string, $giver->getSlackId());
 
+            //Sending confirmation for the giver
+            $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $confirmGiverString, $giver->getSlackId());
 
+            //Sending good news to the receiver
+            $slackManager->sendMessage($receiver->getSlackId(), $confirmReceiverString);
+
+            //Logging the activity to the mriq channel
+//            $slackManager->sendMessage($mriqChannelId, $logToMriqChannelString);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : $e->getMessage();
             $slackManager->sendEphemeralMessage(
@@ -74,10 +117,38 @@ class DefaultController extends Controller
     /**
      * @Route("/mriq", name="mriq")
      */
-    public function mriqAction(Request $request)
-    {
+    public function mriqAction(
+        EntityManagerInterface $em,
+        MriqManager $mriqManager,
+        SlackManager $slackManager,
+        Request $request
+    ) {
+        $slackPayload = $request->request->all();
 
-        //Send empty response (Botman has already sent the output itself - https://github.com/botman/botman/issues/342)
+        try {
+            $user = $em->getRepository(User::class)->findUserBySlackId($slackPayload['user_id']);
+
+            if (null == $user) {
+                $user = $mriqManager->registerMissingUser($slackPayload['user_id']);
+            }
+
+            $string = sprintf(
+                'Hey *@%s*, you currently have %smq left to give and received %smq ! 
+                \nTime to spread some love 💖',
+                $user->getSlackName(),
+                $user->getToGive()
+            );
+
+            $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $string, $user->getSlackName());
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : $e->getMessage();
+            $slackManager->sendEphemeralMessage(
+                $slackPayload['channel_id'],
+                $errorMessage,
+                $slackPayload['user_id']
+            );
+        }
+
         return new Response();
     }
 }
