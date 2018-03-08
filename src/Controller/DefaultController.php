@@ -133,8 +133,7 @@ class DefaultController extends Controller
             }
 
             $string = sprintf(
-                'Hey *@%s*, you currently have %smq left to give and received %smq ! 
-                \nTime to spread some love 💖',
+                'Hey *@%s*, you currently have *%smq* left to give and received *%smq* total ! \n Time to spread some love 💖',
                 $user->getSlackName(),
                 $user->getToGive(),
                 $user->getTotalEarned()
