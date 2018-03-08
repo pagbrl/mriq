@@ -1,4 +1,4 @@
 #!/bin/sh
-cd /mbriqs
+cd /mriqs
 composer install --no-interaction
 php-fpm

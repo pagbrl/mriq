@@ -172,3 +172,5 @@ Temporary Items
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
+
+src/Command/TestAnythingCommand.php
