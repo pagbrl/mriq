@@ -60,34 +60,34 @@ class DefaultController extends Controller
 
             $confirmGiverString = $transaction->getWereLastMriqs() ?
                 sprintf(
-                    'You gave your last *%s* mriqs to *@%s* ! Thanks for spreading the love 💌',
+                    "You gave your last *%s* mriqs to *@%s* ! Thanks for spreading the love 💌",
                     $amount,
                     $receiver->getSlackName()
                 )
                 :
                 sprintf(
-                    'You gave *%s* mriqs to *@%s* ! Thanks for spreading the love 💌',
+                    "You gave *%s* mriqs to *@%s* ! Thanks for spreading the love 💌",
                     $amount,
                     $receiver->getSlackName()
                 );
 
             $confirmReceiverString = $transaction->getWereLastMriqs() ?
                 sprintf(
-                    'You just received *%s* mriqs from *@%s* : _%s_ ',
+                    "You just received *%s* mriqs from *@%s* : _%s_ ",
                     $amount,
                     $giver->getSlackName(),
                     $reason
                 )
                 :
                 sprintf(
-                    '*%s* just gave you their last *%s* mriqs : _%s_',
+                    "*%s* just gave you their last *%s* mriqs : _%s_",
                     $giver->getSlackName(),
                     $amount,
                     $reason
                 );
 
             $logToMriqChannelString = sprintf(
-                '*@s%* gave %smq to *@%s% \n > %s',
+                "*@s%* gave %smq to *@%s% \n > %s",
                 $giver->getSlackName(),
                 $amount,
                 $receiver->getSlackName(),
@@ -133,7 +133,7 @@ class DefaultController extends Controller
             }
 
             $string = sprintf(
-                'Hey *@%s*, you currently have *%smq* left to give and received *%smq* total ! \n Time to spread some love 💖',
+                "Hey *@%s*, you currently have *%smq* left to give and received *%smq* total ! \n Time to spread some love 💖",
                 $user->getSlackName(),
                 $user->getToGive(),
                 $user->getTotalEarned()
