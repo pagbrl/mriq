@@ -49,7 +49,7 @@ class UsersUpdateCommand extends Command
             return sprintf('<info>NEW! %s</info>', $name);
         }, $results['added']);
 
-        $display = array_merge($results['known'], $added);
+        $display = array_merge($added, $results['known']);
 
         $io->listing($display);
     }

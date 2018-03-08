@@ -19,19 +19,6 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    /*
-    public function findBySomething($value)
-    {
-        return $this->createQueryBuilder('u')
-            ->where('u.something = :value')->setParameter('value', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
     /**
      * @param string $slackId
      * @return User|mixed
@@ -45,5 +32,14 @@ class UserRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
+    }
+
+    public function findFaucetUsers(int $maxMriqAmount)
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.toGive < :maxMriqAmount')
+            ->setParameter('maxMriqAmount', $maxMriqAmount)
+            ->getQuery()
+            ->getResult();
     }
 }

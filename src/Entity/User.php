@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -53,11 +54,27 @@ class User
     private $toGive = 0;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="giver")
+     */
+    private $givenTransactions;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="receiver")
+     */
+    private $receivedTransactions;
+
+    /**
      * @return string
      */
     public function getSlackId(): string
     {
         return $this->slackId;
+    }
+
+    public function __construct()
+    {
+        $this->givenTransactions = new ArrayCollection();
+        $this->receivedTransactions = new ArrayCollection();
     }
 
     /**
@@ -175,6 +192,51 @@ class User
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @param int $amount
+     * @return $this
+     */
+    public function receiveBriqs(int $amount)
+    {
+        $previousBalance = $this->getTotalEarned();
+
+        $newBalance = bcadd($previousBalance, $amount);
+        $this->setTotalEarned($newBalance);
+
+        return $this;
+    }
+
+    /**
+     * @param int $amount
+     * @return $this
+     */
+    public function giveBriqs(int $amount)
+    {
+        $previousBalance = $this->getToGive();
+        $previousGiven = $this->getTotalGiven();
+
+        $newBalance = bcsub($previousBalance, $amount);
+        $newGiven = bcadd($previousGiven, $amount);
+
+        $this->setToGive($newBalance)
+            ->setTotalGiven($newGiven);
+
+        return $this;
+    }
+
+    /**
+     * @param int $amount
+     * @return $this
+     */
+    public function updateToGive(int $amount)
+    {
+        $previousToGive = $this->getToGive();
+        $newToGive = bcadd($previousToGive, $amount);
+
+        $this->setToGive($newToGive);
         return $this;
     }
 }

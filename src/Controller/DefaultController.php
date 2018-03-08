@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,20 +18,21 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return new JsonResponse('Coucou petite perruche');
+        return new JsonResponse('Greetings stranger, I am Mriq, it is nice meeting you !');
     }
 
     /**
-     * @Route("/botman", name="message")
+     * @Route("/treat", name="treat")
      */
-    public function messageAction(Request $request)
+    public function messageAction(LoggerInterface $logger, Request $request)
     {
+        $logger->debug(json_encode($request->request->all()));
 
         return new Response();
     }
 
     /**
-     * @Route("/treat", name="treat")
+     * @Route("/mriq", name="mriq")
      */
     public function treatAction(Request $request)
     {
