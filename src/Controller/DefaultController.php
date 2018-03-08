@@ -140,7 +140,7 @@ class DefaultController extends Controller
                 $user->getTotalEarned()
             );
 
-            $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $string, $user->getSlackName());
+            $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $string, $user->getSlackId());
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : $e->getMessage();
             $slackManager->sendEphemeralMessage(
