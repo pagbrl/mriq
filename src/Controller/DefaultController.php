@@ -98,7 +98,7 @@ class DefaultController extends Controller
                         ),
                         1 => array(
                             'name' => 'reaction',
-                            'text' => '😂😂️',
+                            'text' => '😂',
                             'type' => 'button',
                             'value' => Transaction::REACTION_JOY
                         ),
@@ -203,6 +203,7 @@ class DefaultController extends Controller
      * @Route("/reaction", name="mriq")
      */
     public function reactionAction(
+        LoggerInterface $logger,
         EntityManagerInterface $em,
         MriqManager $mriqManager,
         SlackManager $slackManager,
@@ -211,11 +212,13 @@ class DefaultController extends Controller
 
         $slackPayload = $request->request->all();
 
+        $logger->debug(json_encode($slackPayload));
         //Update transaction object
 
         //Respond to message directly to update message in user's slackbot
 
         //Update log message in #mriq
 
+        return new Response();
     }
 }
