@@ -190,7 +190,7 @@ class Transaction
     /**
      * @return string
      */
-    public function getMriqChannelMessageTs(): string
+    public function getMriqChannelMessageTs()
     {
         return $this->mriqChannelMessageTs;
     }
@@ -208,7 +208,7 @@ class Transaction
     /**
      * @return string
      */
-    public function getReaction(): string
+    public function getReaction()
     {
         return $this->reaction;
     }
@@ -226,7 +226,7 @@ class Transaction
     /**
      * @return string
      */
-    public function getMriqSlackbotMessageTs(): string
+    public function getMriqSlackbotMessageTs()
     {
         return $this->mriqSlackbotMessageTs;
     }
