@@ -103,7 +103,12 @@ class DefaultController extends Controller
             //Logging the activity to the mriq channel
 //            $slackManager->sendMessage($mriqChannelId, $logToMriqChannelString);
         } catch (\Exception $e) {
-            $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : $e->getMessage();
+            $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : sprintf(
+                '%s - %s - l.%s',
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine()
+            );
             $slackManager->sendEphemeralMessage(
                 $slackPayload['channel_id'],
                 $errorMessage,

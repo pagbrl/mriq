@@ -117,7 +117,7 @@ class MriqManager
 
         if ($amount == 0) {
             $errorString = sprintf(
-                'Come on, don\'t be greedy, you have %s mriqs to give, go spread some love ❤️ !',
+                'Come on 😏, you have %s mriqs to give, go spread some love ❤️ !',
                 $giver->getToGive()
             );
             throw new \Exception($errorString);
