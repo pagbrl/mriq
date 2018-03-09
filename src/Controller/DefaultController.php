@@ -161,12 +161,7 @@ class DefaultController extends Controller
             $em->persist($transaction);
             $em->flush();
         } catch (\Exception $e) {
-            $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : sprintf(
-                '%s - %s - l.%s',
-                $e->getMessage(),
-                $e->getFile(),
-                $e->getLine()
-            );
+            $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : $e->getMessage();
             $slackManager->sendEphemeralMessage(
                 $slackPayload['channel_id'],
                 $errorMessage,
