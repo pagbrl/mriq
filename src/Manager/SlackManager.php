@@ -106,6 +106,5 @@ class SlackManager
             'attachments' => json_encode($attachments),
             'as_user' => false
         ))->getBody()->getContents();
-
     }
 }
