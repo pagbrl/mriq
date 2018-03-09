@@ -99,7 +99,7 @@ class SlackManager
 
     public function updateChat(string $ts, string $to, string $text, array $attachments = null)
     {
-        return $this->call('chat.postMessage', array(
+        return $this->call('chat.update', array(
             'ts' => $ts,
             'channel' => $to,
             'text' => $text,
