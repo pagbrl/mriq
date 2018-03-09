@@ -211,9 +211,9 @@ class DefaultController extends Controller
         Request $request
     ) {
 
-        $slackPayload = json_decode($request->request->get('payload'), false);
+        $slackPayload = json_decode($request->request->get('payload'), true);
 
-        $logger->debug($slackPayload);
+        $logger->debug(json_encode($slackPayload));
 
         try {
             //Update transaction object
@@ -264,6 +264,10 @@ class DefaultController extends Controller
                 $transaction->getReaction()
             );
 
+//            $logMessageString = sprintf('');
+//
+//            $logMessageAttachments = array();
+
             //Respond to message directly to update message in receiver's slackbot
             $slackManager->respondToAction(
                 $slackPayload['response_url'],
@@ -271,13 +275,22 @@ class DefaultController extends Controller
                 $receiverSlackbotAttachments
             );
 
+            //Notify giver of reaction
             $slackManager->sendMessage(
                 $transaction->getGiver()->getSlackId(),
                 $giverSlackbotString,
                 $giverSlackbotAttachments
             );
 
-            //Update log message in #mriq
+//            //Update log message in #mriq
+//            $slackManager->updateChat(
+//                $transaction->getMriqChannelMessageTs(),
+//                $logMessageString,
+//                $logMessageAttachments
+//            )
+
+            $em->persist($transaction);
+            $em->flush();
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : sprintf(
                 '%s - %s - l.%s',
@@ -286,7 +299,7 @@ class DefaultController extends Controller
                 $e->getLine()
             );
             $slackManager->sendEphemeralMessage(
-                $slackPayload['channel_id'],
+                $slackPayload['channel']['id'],
                 $errorMessage,
                 $slackPayload['user_id']
             );

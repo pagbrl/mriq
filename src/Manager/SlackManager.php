@@ -95,4 +95,9 @@ class SlackManager
             )
         )->getBody()->getContents();
     }
+
+    public function updateChat()
+    {
+
+    }
 }
