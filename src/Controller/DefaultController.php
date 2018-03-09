@@ -73,18 +73,45 @@ class DefaultController extends Controller
 
             $confirmReceiverString = $transaction->getWereLastMriqs() ?
                 sprintf(
-                    "*@%s* just gave you their last *%s* mriqs : _%s_",
+                    "*@%s* just gave you their last *%s* mriqs (You now have %smq)",
                     $giver->getSlackName(),
                     $amount,
-                    $reason
+                    $receiver->getTotalEarned()
                 )
                 :
                 sprintf(
-                    "You just received *%s* mriqs from *@%s* : _%s_ ",
+                    "You just received *%s* mriqs from *@%s* : %s (You know have %smq)",
                     $amount,
                     $giver->getSlackName(),
-                    $reason
+                    $receiver->getTotalEarned()
                 );
+
+            $receiverActionAttachment = array(
+                0 => array(
+                    'text' => $reason,
+                    'actions' => array(
+                        0 => array(
+                            'name' => 'reaction',
+                            'text' => '❤️',
+                            'type' => 'button',
+                            'value' => Transaction::REACTION_HEART
+                        ),
+                        1 => array(
+                            'name' => 'reaction',
+                            'text' => '😂😂️',
+                            'type' => 'button',
+                            'value' => Transaction::REACTION_JOY
+                        ),
+                        2 => array(
+                            'name' => 'reaction',
+                            'text' => '👍🏻️',
+                            'type' => 'button',
+                            'value' => Transaction::REACTION_THUMBSUP
+                        )
+                    )
+
+                )
+            );
 
             $logToMriqChannelString = sprintf(
                 "*@%s* gave %smq to *@%s*",
@@ -94,7 +121,7 @@ class DefaultController extends Controller
                 $reason
             );
 
-            $logToMriqChannelAttachments = array(
+            $reasonAttachment = array(
                 0 => array('text' => $reason)
             );
 
@@ -105,7 +132,18 @@ class DefaultController extends Controller
             $slackManager->sendMessage($receiver->getSlackId(), $confirmReceiverString);
 
             //Logging the activity to the mriq channel
-            $slackManager->sendMessage($mriqChannelId, $logToMriqChannelString, $logToMriqChannelAttachments);
+            $mriqMessage = json_decode(
+                $slackManager->sendMessage(
+                    $mriqChannelId,
+                    $logToMriqChannelString,
+                    $reasonAttachment
+                ),
+                true
+            );
+
+            $transaction->setMriqChannelMessageTs($mriqMessage['ts']);
+            $em->persist($transaction);
+            $em->flush();
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : sprintf(
                 '%s - %s - l.%s',
@@ -159,5 +197,25 @@ class DefaultController extends Controller
         }
 
         return new Response();
+    }
+
+    /**
+     * @Route("/reaction", name="mriq")
+     */
+    public function reactionAction(
+        EntityManagerInterface $em,
+        MriqManager $mriqManager,
+        SlackManager $slackManager,
+        Request $request
+    ) {
+
+        $slackPayload = $request->request->all();
+
+        //Update transaction object
+
+        //Respond to message directly to update message in user's slackbot
+
+        //Update log message in #mriq
+
     }
 }

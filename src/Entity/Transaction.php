@@ -9,6 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Transaction
 {
+
+    const REACTION_HEART = 'heart';
+    const REACTION_JOY = 'joy';
+    const REACTION_THUMBSUP = 'thumbsup';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -49,6 +54,18 @@ class Transaction
      * @ORM\Column(type="boolean", nullable=false)
      */
     private $wereLastMriqs = false;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $reaction;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $mriqChannelMessageTs;
 
     /**
      * @return mixed
@@ -155,6 +172,42 @@ class Transaction
     public function setWereLastMriqs(bool $wereLastMriqs): Transaction
     {
         $this->wereLastMriqs = $wereLastMriqs;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMriqChannelMessageTs(): string
+    {
+        return $this->mriqChannelMessageTs;
+    }
+
+    /**
+     * @param string $mriqChannelMessageTs
+     * @return Transaction
+     */
+    public function setMriqChannelMessageTs(string $mriqChannelMessageTs): Transaction
+    {
+        $this->mriqChannelMessageTs = $mriqChannelMessageTs;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReaction(): string
+    {
+        return $this->reaction;
+    }
+
+    /**
+     * @param string $reaction
+     * @return Transaction
+     */
+    public function setReaction(string $reaction): Transaction
+    {
+        $this->reaction = $reaction;
         return $this;
     }
 }
