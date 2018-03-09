@@ -211,7 +211,7 @@ class DefaultController extends Controller
         Request $request
     ) {
 
-        $slackPayload = json_decode($request->request->get('payload'));
+        $slackPayload = json_decode($request->request->get('payload'), false);
 
         $logger->debug($slackPayload);
 
