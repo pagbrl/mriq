@@ -287,7 +287,7 @@ class DefaultController extends Controller
 
             //Respond to message directly to update message in receiver's slackbot
             $slackManager->updateChat(
-                $slackPayload['original_message']['ts'],
+                $transaction->getMriqSlackbotMessageTs(),
                 $transaction->getReceiver()->getSlackId(),
                 $receiverSlackbotString,
                 $receiverSlackbotAttachments
