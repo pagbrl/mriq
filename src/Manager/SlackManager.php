@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 
 class SlackManager
 {
@@ -79,21 +80,17 @@ class SlackManager
 
     public function respondToAction(string $respondUrl, string $text, array $attachments = null)
     {
-        $body = array(
+        $json_payload = array(
             'text' => $text,
-            "replace_original" => true,
-            'attachments' => json_encode($attachments),
-            'as_user' => false,
-            'token' => $this->slackToken
+            'replace_original' => true,
+            'response_type' => 'in_channel',
+            'attachments' => $attachments,
         );
 
         return $this->guzzle->request(
             'POST',
             $respondUrl,
-            array(
-                'headers' => array(),
-                'form_params' => $body
-            )
+            [RequestOptions::JSON => $json_payload]
         )->getBody()->getContents();
     }
 
