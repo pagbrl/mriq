@@ -73,26 +73,27 @@ class DefaultController extends Controller
 
             $confirmReceiverString = $transaction->getWereLastMriqs() ?
                 sprintf(
-                    "You just received *%s* mriqs from *@%s* : _%s_ ",
-                    $amount,
+                    "*@%s* just gave you their last *%s* mriqs : _%s_",
                     $giver->getSlackName(),
+                    $amount,
                     $reason
                 )
                 :
                 sprintf(
-                    "*%s* just gave you their last *%s* mriqs : _%s_",
-                    $giver->getSlackName(),
+                    "You just received *%s* mriqs from *@%s* : _%s_ ",
                     $amount,
+                    $giver->getSlackName(),
                     $reason
                 );
 
-//            $logToMriqChannelString = sprintf(
-//                "*@s%* gave %smq to *@%s% \n > %s",
-//                $giver->getSlackName(),
-//                $amount,
-//                $receiver->getSlackName(),
-//                $reason
-//            );
+
+            $logToMriqChannelString = sprintf(
+                "*@%s* gave %smq to *@%s \n > %s",
+                $giver->getSlackName(),
+                $amount,
+                $receiver->getSlackName(),
+                $reason
+            );
 
             //Sending confirmation for the giver
             $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $confirmGiverString, $giver->getSlackId());
@@ -101,7 +102,7 @@ class DefaultController extends Controller
             $slackManager->sendMessage($receiver->getSlackId(), $confirmReceiverString);
 
             //Logging the activity to the mriq channel
-//            $slackManager->sendMessage($mriqChannelId, $logToMriqChannelString);
+            $slackManager->sendMessage($mriqChannelId, $logToMriqChannelString);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : sprintf(
                 '%s - %s - l.%s',
