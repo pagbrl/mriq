@@ -128,7 +128,7 @@ class DefaultController extends Controller
             );
 
             //Logging the activity to the mriq channel
-            $mriqMessage = json_decode(
+            $mriqChannelMessage = json_decode(
                 $slackManager->sendMessage(
                     $mriqChannelId,
                     $logToMriqChannelString,
@@ -137,15 +137,24 @@ class DefaultController extends Controller
                 true
             );
 
-            $logger->debug(json_encode($mriqMessage));
+            $transaction->setMriqChannelMessageTs($mriqChannelMessage['ts']);
 
-            $transaction->setMriqChannelMessageTs($mriqMessage['ts']);
+            //Sending good news to the receiver
+            $receiverSlackbotMessage = json_decode(
+                $slackManager->sendMessage(
+                    $receiver->getSlackId(),
+                    $confirmReceiverString,
+                    $receiverActionAttachment
+                ),
+                true
+            );
+
+            $transaction->setMriqSlackbotMessageTs($receiverSlackbotMessage['ts']);
 
             //Sending confirmation for the giver
             $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $confirmGiverString, $giver->getSlackId());
 
-            //Sending good news to the receiver
-            $slackManager->sendMessage($receiver->getSlackId(), $confirmReceiverString, $receiverActionAttachment);
+
 
             $em->persist($transaction);
             $em->flush();
