@@ -142,8 +142,6 @@ class MriqManager
             $this->em->persist($giver);
             $this->em->persist($transaction);
 
-            $this->em->flush();
-
             return $transaction;
         } else {
             throw new \Exception(

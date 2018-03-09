@@ -31,6 +31,7 @@ class DefaultController extends Controller
      * @Route("/treat", name="treat")
      */
     public function treatAction(
+        LoggerInterface $logger,
         EntityManagerInterface $em,
         MriqManager $mriqManager,
         SlackManager $slackManager,
@@ -126,12 +127,6 @@ class DefaultController extends Controller
                 0 => array('text' => $reason)
             );
 
-            //Sending confirmation for the giver
-            $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $confirmGiverString, $giver->getSlackId());
-
-            //Sending good news to the receiver
-            $slackManager->sendMessage($receiver->getSlackId(), $confirmReceiverString, $receiverActionAttachment);
-
             //Logging the activity to the mriq channel
             $mriqMessage = json_decode(
                 $slackManager->sendMessage(
@@ -142,7 +137,16 @@ class DefaultController extends Controller
                 false
             );
 
+            $logger->debug(json_encode($mriqMessage));
+
             $transaction->setMriqChannelMessageTs($mriqMessage['ts']);
+
+            //Sending confirmation for the giver
+            $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $confirmGiverString, $giver->getSlackId());
+
+            //Sending good news to the receiver
+            $slackManager->sendMessage($receiver->getSlackId(), $confirmReceiverString, $receiverActionAttachment);
+
             $em->persist($transaction);
             $em->flush();
         } catch (\Exception $e) {
