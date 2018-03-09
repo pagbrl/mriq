@@ -86,13 +86,13 @@ class DefaultController extends Controller
                     $reason
                 );
 
-            $logToMriqChannelString = sprintf(
-                "*@s%* gave %smq to *@%s% \n > %s",
-                $giver->getSlackName(),
-                $amount,
-                $receiver->getSlackName(),
-                $reason
-            );
+//            $logToMriqChannelString = sprintf(
+//                "*@s%* gave %smq to *@%s% \n > %s",
+//                $giver->getSlackName(),
+//                $amount,
+//                $receiver->getSlackName(),
+//                $reason
+//            );
 
             //Sending confirmation for the giver
             $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $confirmGiverString, $giver->getSlackId());
