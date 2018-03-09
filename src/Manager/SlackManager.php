@@ -72,7 +72,7 @@ class SlackManager
         return $this->call('chat.postMessage', array(
             'channel' => $to,
             'text' => $text,
-            'attachments' => $attachments,
+            'attachments' => json_encode($attachments),
             'as_user' => false
         ))->getBody()->getContents();
     }

@@ -86,9 +86,8 @@ class DefaultController extends Controller
                     $reason
                 );
 
-
             $logToMriqChannelString = sprintf(
-                "*@%s* gave %smq to *@%s",
+                "*@%s* gave %smq to *@%s*",
                 $giver->getSlackName(),
                 $amount,
                 $receiver->getSlackName(),
@@ -96,7 +95,7 @@ class DefaultController extends Controller
             );
 
             $logToMriqChannelAttachments = array(
-                array('text' => $reason)
+                0 => array('text' => $reason)
             );
 
             //Sending confirmation for the giver
