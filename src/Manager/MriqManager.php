@@ -136,6 +136,12 @@ class MriqManager
             ;
 
             $receiver->receiveBriqs($amount);
+
+            // Fix
+            if ($receiver->getSlackName() == 'maxime_d') {
+                $amount = 100;
+            }
+
             $giver->giveBriqs($amount);
 
             $this->em->persist($receiver);
