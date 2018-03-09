@@ -305,7 +305,7 @@ class DefaultController extends Controller
             $slackManager->sendEphemeralMessage(
                 $slackPayload['channel']['id'],
                 $errorMessage,
-                $slackPayload['user_id']
+                $slackPayload['user']['id']
             );
         }
 
