@@ -80,7 +80,7 @@ class DefaultController extends Controller
                 )
                 :
                 sprintf(
-                    "You just received *%s* mriqs from *@%s* : %s (You know have %smq)",
+                    "You just received *%s* mriqs from *@%s* (You know have %smq)",
                     $amount,
                     $giver->getSlackName(),
                     $receiver->getTotalEarned()
