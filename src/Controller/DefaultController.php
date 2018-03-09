@@ -217,7 +217,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/reaction", name="mriq")
+     * @Route("/reaction", name="reaction")
      * @Method({"POST"})
      */
     public function reactionAction(
