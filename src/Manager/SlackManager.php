@@ -67,11 +67,12 @@ class SlackManager
         ))->getBody()->getContents();
     }
 
-    public function sendMessage(string $to, string $text)
+    public function sendMessage(string $to, string $text, array $attachments = null)
     {
         return $this->call('chat.postMessage', array(
             'channel' => $to,
             'text' => $text,
+            'attachments' => $attachments,
             'as_user' => false
         ))->getBody()->getContents();
     }

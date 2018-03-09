@@ -88,11 +88,15 @@ class DefaultController extends Controller
 
 
             $logToMriqChannelString = sprintf(
-                "*@%s* gave %smq to *@%s \n > %s",
+                "*@%s* gave %smq to *@%s",
                 $giver->getSlackName(),
                 $amount,
                 $receiver->getSlackName(),
                 $reason
+            );
+
+            $logToMriqChannelAttachments = array(
+                array('text' => $reason)
             );
 
             //Sending confirmation for the giver
@@ -102,7 +106,7 @@ class DefaultController extends Controller
             $slackManager->sendMessage($receiver->getSlackId(), $confirmReceiverString);
 
             //Logging the activity to the mriq channel
-            $slackManager->sendMessage($mriqChannelId, $logToMriqChannelString);
+            $slackManager->sendMessage($mriqChannelId, $logToMriqChannelString, $logToMriqChannelAttachments);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : sprintf(
                 '%s - %s - l.%s',
