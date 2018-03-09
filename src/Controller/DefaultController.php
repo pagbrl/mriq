@@ -238,6 +238,10 @@ class DefaultController extends Controller
                 throw new \Exception('Whoops, I could not find the transaction you are trying to react to 🤔');
             }
 
+            if (null != $transaction->getReaction()) {
+                throw new \Exception('Whoops, you already reacted to this transaction 🙉');
+            }
+
             $reaction = $slackPayload['actions'][0]['value'];
 
             if (in_array($reaction, Transaction::AVAILABLE_REACTIONS)) {
