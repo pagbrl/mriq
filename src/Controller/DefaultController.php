@@ -281,7 +281,12 @@ class DefaultController extends Controller
                 $transaction->getReaction()
             );
 
-            $logMessageString = sprintf('*@%s* gave %smq to *@%s*');
+            $logMessageString = sprintf(
+                '*@%s* gave %smq to *@%s*',
+                $transaction->getGiver()->getSlackName(),
+                $transaction->getAmount(),
+                $transaction->getReceiver()->getSlackName()
+            );
 
             $logMessageAttachments = array(
                 0 => array('text' => $transaction->getReason()),
