@@ -158,7 +158,7 @@ class MriqManager
      */
     public function parseSlackTreatText(string $input)
     {
-        preg_match('/^<@([^|]*)[^>]*> (\d)\s?(.*)?/', $input, $matches, PREG_OFFSET_CAPTURE);
+        preg_match('/^<@([^|]*)[^>]*>\s*(\d)\s?(.*)?/', $input, $matches, PREG_OFFSET_CAPTURE);
 
         if (count($matches) == 4) {
             $user = $this->em->getRepository(User::class)->findUserBySlackId($matches[1][0]);
