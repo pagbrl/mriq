@@ -129,7 +129,7 @@ class DefaultController extends Controller
             $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $confirmGiverString, $giver->getSlackId());
 
             //Sending good news to the receiver
-            $slackManager->sendMessage($receiver->getSlackId(), $confirmReceiverString);
+            $slackManager->sendMessage($receiver->getSlackId(), $confirmReceiverString, $receiverActionAttachment);
 
             //Logging the activity to the mriq channel
             $mriqMessage = json_decode(
