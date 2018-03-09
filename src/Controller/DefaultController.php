@@ -89,6 +89,7 @@ class DefaultController extends Controller
             $receiverActionAttachment = array(
                 0 => array(
                     'text' => $reason,
+                    'callback_id' => 'reaction',
                     'actions' => array(
                         0 => array(
                             'name' => 'reaction',
