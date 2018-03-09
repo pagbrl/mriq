@@ -76,4 +76,23 @@ class SlackManager
             'as_user' => false
         ))->getBody()->getContents();
     }
+
+    public function respondToAction(string $respondUrl, string $text, array $attachments = null)
+    {
+        $body = array(
+            'text' => $text,
+            'attachments' => json_encode($attachments),
+            'as_user' => false,
+            'token' => $this->slackToken
+        );
+
+        return $this->guzzle->request(
+            'POST',
+            $respondUrl,
+            array(
+                'headers' => array(),
+                'form_params' => $body
+            )
+        )->getBody()->getContents();
+    }
 }

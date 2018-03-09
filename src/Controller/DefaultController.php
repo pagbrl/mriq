@@ -105,7 +105,7 @@ class DefaultController extends Controller
                         ),
                         2 => array(
                             'name' => 'reaction',
-                            'text' => '👍🏻️',
+                            'text' => '👍',
                             'type' => 'button',
                             'value' => Transaction::REACTION_THUMBSUP
                         )
@@ -211,14 +211,86 @@ class DefaultController extends Controller
         Request $request
     ) {
 
-        $slackPayload = $request->request->all();
+        $slackPayload = json_decode($request->request->get('payload'));
 
-        $logger->debug(json_encode($slackPayload));
-        //Update transaction object
+        $logger->debug($slackPayload);
 
-        //Respond to message directly to update message in user's slackbot
+        try {
+            //Update transaction object
+            /** @var Transaction $transaction */
+            $transaction = $em->getRepository(Transaction::class)
+                ->findOneByMriqSlackbotMessageTs($slackPayload['original_message']['ts']);
 
-        //Update log message in #mriq
+            if (null == $transaction) {
+                throw new \Exception('Whoops, I could not find the transaction you are trying to react to 🤔');
+            }
+
+            $reaction = $slackPayload['actions'][0]['value'];
+
+            if (in_array($reaction, Transaction::AVAILABLE_REACTIONS)) {
+                $transaction->setReaction($reaction);
+            } else {
+                throw new \Exception('Wow, this is an unexpected reaction !');
+            }
+
+            $receiverSlackbotAttachments = array(
+                0 => array('text' => $transaction->getReason()),
+                1 => array('text' => sprintf(
+                    'You reacted with :%s:',
+                    $transaction->getReaction()
+                ))
+            );
+
+            $receiverSlackbotString = sprintf(
+                '*@%s* gave you *%smq* (You now have %smq)',
+                $transaction->getGiver()->getSlackName(),
+                $transaction->getAmount(),
+                $transaction->getReceiver()->getTotalEarned()
+            );
+
+            $giverSlackbotAttachments = array(
+                0 => array('text' => sprintf(
+                    '*@%s* gave %smq to *@%s*',
+                    $transaction->getGiver()->getSlackName(),
+                    $transaction->getAmount(),
+                    $transaction->getReceiver()->getSlackName()
+                )),
+                1 => array('text' => $transaction->getReason())
+            );
+
+            $giverSlackbotString = sprintf(
+                '*@%s* reacted with :%s:',
+                $transaction->getReceiver()->getSlackName(),
+                $transaction->getReaction()
+            );
+
+            //Respond to message directly to update message in receiver's slackbot
+            $slackManager->respondToAction(
+                $slackPayload['response_url'],
+                $receiverSlackbotString,
+                $receiverSlackbotAttachments
+            );
+
+            $slackManager->sendMessage(
+                $transaction->getGiver()->getSlackId(),
+                $giverSlackbotString,
+                $giverSlackbotAttachments
+            );
+
+            //Update log message in #mriq
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : sprintf(
+                '%s - %s - l.%s',
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine()
+            );
+            $slackManager->sendEphemeralMessage(
+                $slackPayload['channel_id'],
+                $errorMessage,
+                $slackPayload['user_id']
+            );
+        }
 
         return new Response();
     }

@@ -10,6 +10,12 @@ use Doctrine\ORM\Mapping as ORM;
 class Transaction
 {
 
+    const AVAILABLE_REACTIONS = array(
+        self::REACTION_JOY,
+        self::REACTION_THUMBSUP,
+        self::REACTION_HEART
+    );
+
     const REACTION_HEART = 'heart';
     const REACTION_JOY = 'joy';
     const REACTION_THUMBSUP = 'thumbsup';
@@ -66,6 +72,12 @@ class Transaction
      * @ORM\Column(type="string", nullable=true)
      */
     private $mriqChannelMessageTs;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $mriqSlackbotMessageTs;
 
     /**
      * @return mixed
@@ -208,6 +220,24 @@ class Transaction
     public function setReaction(string $reaction): Transaction
     {
         $this->reaction = $reaction;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMriqSlackbotMessageTs(): string
+    {
+        return $this->mriqSlackbotMessageTs;
+    }
+
+    /**
+     * @param string $mriqSlackbotMessageTs
+     * @return Transaction
+     */
+    public function setMriqSlackbotMessageTs(string $mriqSlackbotMessageTs): Transaction
+    {
+        $this->mriqSlackbotMessageTs = $mriqSlackbotMessageTs;
         return $this;
     }
 }
