@@ -281,25 +281,23 @@ class DefaultController extends Controller
                 $transaction->getReaction()
             );
 
-//            $logMessageString = sprintf('');
-//
-//            $logMessageAttachments = array();
+            $logMessageString = sprintf('*@%s* gave %smq to *@%s*');
+
+            $logMessageAttachments = array(
+                0 => array('text' => $transaction->getReason()),
+                1 => array('text' => sprintf(
+                    '*@%s* reacted with :%s:',
+                    $transaction->getReceiver()->getSlackName(),
+                    $transaction->getReaction()
+                ))
+            );
 
             //Respond to message directly to update message in receiver's slackbot
-//            $slackManager->updateChat(
-//                $slackPayload['original_message']['ts'],
-//                $transaction->getReceiver()->getSlackId(),
-//                $receiverSlackbotString,
-//                $receiverSlackbotAttachments
-//            );
-
-            $response = $slackManager->respondToAction(
+            $slackManager->respondToAction(
                 $slackPayload['response_url'],
                 $receiverSlackbotString,
                 $receiverSlackbotAttachments
             );
-
-            $logger->debug($response);
 
             //Notify giver of reaction
             $slackManager->sendMessage(
@@ -308,12 +306,15 @@ class DefaultController extends Controller
                 $giverSlackbotAttachments
             );
 
-//            //Update log message in #mriq
-//            $slackManager->updateChat(
-//                $transaction->getMriqChannelMessageTs(),
-//                $logMessageString,
-//                $logMessageAttachments
-//            )
+            //Update log message in #mriq
+            $response = $slackManager->updateChat(
+                $transaction->getMriqChannelMessageTs(),
+                $this->getParameter('mriq_channel_id'),
+                $logMessageString,
+                $logMessageAttachments
+            );
+
+            $logger->debug($response);
 
             $em->persist($transaction);
             $em->flush();
