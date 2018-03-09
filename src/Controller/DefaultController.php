@@ -134,7 +134,7 @@ class DefaultController extends Controller
                     $logToMriqChannelString,
                     $reasonAttachment
                 ),
-                false
+                true
             );
 
             $logger->debug(json_encode($mriqMessage));
