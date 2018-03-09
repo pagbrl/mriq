@@ -81,6 +81,8 @@ class SlackManager
     {
         $body = array(
             'text' => $text,
+            "response_type" => "message",
+            "replace_original" => true,
             'attachments' => json_encode($attachments),
             'as_user' => false,
             'token' => $this->slackToken
