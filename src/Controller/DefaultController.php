@@ -73,14 +73,14 @@ class DefaultController extends Controller
 
             $confirmReceiverString = $transaction->getWereLastMriqs() ?
                 sprintf(
-                    "*@%s* just gave you their last *%s* mriqs (You now have %smq)",
+                    "*@%s* just gave you their last *%smriqs* (You now have %smq)",
                     $giver->getSlackName(),
                     $amount,
                     $receiver->getTotalEarned()
                 )
                 :
                 sprintf(
-                    "You just received *%s* mriqs from *@%s* (You know have %smq)",
+                    "You just received *%smq* from *@%s* (You know have %smq)",
                     $amount,
                     $giver->getSlackName(),
                     $receiver->getTotalEarned()
@@ -139,7 +139,7 @@ class DefaultController extends Controller
                     $logToMriqChannelString,
                     $reasonAttachment
                 ),
-                true
+                false
             );
 
             $transaction->setMriqChannelMessageTs($mriqMessage['ts']);
