@@ -7,13 +7,13 @@ use App\Entity\User;
 use App\Manager\MriqManager;
 use App\Manager\SlackManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends Controller
 {
@@ -29,6 +29,7 @@ class DefaultController extends Controller
 
     /**
      * @Route("/treat", name="treat")
+     * @Method({"POST"})
      */
     public function treatAction(
         LoggerInterface $logger,
@@ -40,6 +41,7 @@ class DefaultController extends Controller
         $slackPayload = $request->request->all();
 
         try {
+            /** @var User $giver */
             $giver = $em->getRepository(User::class)->findUserBySlackId($slackPayload['user_id']);
 
             if (null == $giver) {
@@ -81,7 +83,7 @@ class DefaultController extends Controller
                 )
                 :
                 sprintf(
-                    "You just received *%smq* from *@%s* (You know have %smq)",
+                    "You just received *%smq* from *@%s* (You now have %smq)",
                     $amount,
                     $giver->getSlackName(),
                     $receiver->getTotalEarned()
@@ -177,6 +179,7 @@ class DefaultController extends Controller
 
     /**
      * @Route("/mriq", name="mriq")
+     * @Method({"POST"})
      */
     public function mriqAction(
         EntityManagerInterface $em,
@@ -215,6 +218,7 @@ class DefaultController extends Controller
 
     /**
      * @Route("/reaction", name="mriq")
+     * @Method({"POST"})
      */
     public function reactionAction(
         LoggerInterface $logger,
@@ -324,12 +328,7 @@ class DefaultController extends Controller
             $em->persist($transaction);
             $em->flush();
         } catch (\Exception $e) {
-            $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : sprintf(
-                '%s - %s - l.%s',
-                $e->getMessage(),
-                $e->getFile(),
-                $e->getLine()
-            );
+            $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : $e->getMessage();
             $slackManager->sendEphemeralMessage(
                 $slackPayload['channel']['id'],
                 $errorMessage,
