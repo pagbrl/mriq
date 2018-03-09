@@ -81,7 +81,6 @@ class SlackManager
     {
         $body = array(
             'text' => $text,
-            "response_type" => "message",
             "replace_original" => true,
             'attachments' => json_encode($attachments),
             'as_user' => false,
@@ -98,8 +97,15 @@ class SlackManager
         )->getBody()->getContents();
     }
 
-    public function updateChat()
+    public function updateChat(string $ts, string $to, string $text, array $attachments = null)
     {
+        return $this->call('chat.postMessage', array(
+            'ts' => $ts,
+            'channel' => $to,
+            'text' => $text,
+            'attachments' => json_encode($attachments),
+            'as_user' => false
+        ))->getBody()->getContents();
 
     }
 }

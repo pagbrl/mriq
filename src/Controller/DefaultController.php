@@ -282,8 +282,9 @@ class DefaultController extends Controller
 //            $logMessageAttachments = array();
 
             //Respond to message directly to update message in receiver's slackbot
-            $slackManager->respondToAction(
-                $slackPayload['response_url'],
+            $slackManager->updateChat(
+                $slackPayload['original_message']['ts'],
+                $transaction->getReceiver()->getSlackId(),
                 $receiverSlackbotString,
                 $receiverSlackbotAttachments
             );
