@@ -26,6 +26,7 @@ In the Scopes section, chose the following permissions :
 - bot
 - commands
 - chat:write:bot (for the bot to be able to post in various slack channels)
+- users:read (for the app to be able to get the users list periodically)
 
 #### Bot Users
 Set the display name and username of your bot, and leave the Always Show My Bot as Online option to off (users have no interest in talking directly to the bot).
