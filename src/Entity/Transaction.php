@@ -13,12 +13,14 @@ class Transaction
     const AVAILABLE_REACTIONS = array(
         self::REACTION_JOY,
         self::REACTION_THUMBSUP,
-        self::REACTION_HEART
+        self::REACTION_HEART,
+        self::REACTION_POOP
     );
 
     const REACTION_HEART = 'heart';
     const REACTION_JOY = 'joy';
     const REACTION_THUMBSUP = 'thumbsup';
+    const REACTION_POOP = 'poop';
 
     /**
      * @ORM\Id

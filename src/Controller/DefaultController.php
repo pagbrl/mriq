@@ -111,6 +111,12 @@ class DefaultController extends Controller
                             'text' => '👍',
                             'type' => 'button',
                             'value' => Transaction::REACTION_THUMBSUP
+                        ),
+                        3 => array(
+                            'name' => 'reaction',
+                            'text' => '💩',
+                            'type' => 'button',
+                            'value' => Transaction::REACTION_POOP
                         )
                     )
 
