@@ -56,9 +56,9 @@ class MriqManager
                 continue;
             } else {
                 $slackName =
-                    $rawUser['profile']['display_name'] == ''
+                    $rawUser['profile']['display_name_normalized'] == ''
                         ? $rawUser['name']
-                        : $rawUser['profile']['display_name'];
+                        : $rawUser['profile']['display_name_normalized'];
 
                 $users[] = $rawUser['name'];
                 $existingUser = $this->em->getRepository(User::class)
