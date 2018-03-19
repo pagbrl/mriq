@@ -61,15 +61,15 @@ class MriqManager
 
                 if (null !== $existingUser) {
                     $user = $existingUser;
-                    $results['known'][] = $rawUser['name'];
+                    $results['known'][] = $rawUser['profile']['display_name'];
                 } else {
                     $user = (new User())->setToGive(6);
-                    $results['added'][] = $rawUser['name'];
+                    $results['added'][] = $rawUser['profile']['display_name'];
                 }
 
                 $user
                     ->setSlackId($rawUser['id'])
-                    ->setSlackName($rawUser['name'])
+                    ->setSlackName($rawUser['profile']['display_name'])
                     ->setSlackRealName($rawUser['profile']['real_name_normalized'])
                 ;
 
