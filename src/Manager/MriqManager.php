@@ -55,21 +55,26 @@ class MriqManager
             ) {
                 continue;
             } else {
+                $slackName =
+                    $rawUser['profile']['display_name'] == ''
+                        ? $rawUser['name']
+                        : $rawUser['profile']['display_name'];
+
                 $users[] = $rawUser['name'];
                 $existingUser = $this->em->getRepository(User::class)
                     ->findUserBySlackId($rawUser['id']);
 
                 if (null !== $existingUser) {
                     $user = $existingUser;
-                    $results['known'][] = $rawUser['profile']['display_name'];
+                    $results['known'][] = $slackName;
                 } else {
                     $user = (new User())->setToGive(6);
-                    $results['added'][] = $rawUser['profile']['display_name'];
+                    $results['added'][] = $slackName;
                 }
 
                 $user
                     ->setSlackId($rawUser['id'])
-                    ->setSlackName($rawUser['profile']['display_name'])
+                    ->setSlackName($slackName)
                     ->setSlackRealName($rawUser['profile']['real_name_normalized'])
                 ;
 
