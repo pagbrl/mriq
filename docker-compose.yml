@@ -2,7 +2,7 @@ version: '3'
 services:
     nginx:
         image: nginx:1.13
-        container_name: "mbriqs-nginx"
+        container_name: "mriq-nginx"
         environment:
             - APP_DIR
         ports:
@@ -10,36 +10,36 @@ services:
         links:
             - "php-fpm:php.host"
         volumes:
-            - "${APP_DIR}:/mbriqs:rw"
+            - "${APP_DIR}:/mriq:rw"
             - "./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf"
         depends_on:
             - php-fpm
             - mysql
-        # logging:
-        #     driver: "syslog"
-        #     options:
-        #         syslog-facility: "local0"
-        #         tag: "mbriqs-nginx"
+        logging:
+            driver: "syslog"
+            options:
+                syslog-facility: "local0"
+                tag: "mriq-nginx"
 
     php-fpm:
         build: ./docker/php
-        container_name: "mbriqs-php"
+        container_name: "mriq-php"
         links:
             - "mysql:mysql.host"
         entrypoint: /bin/bash /tmp/entrypoint.sh
-        working_dir: /mbriqs
+        working_dir: /mriq
         volumes:
-            - "${APP_DIR}:/mbriqs:rw"
+            - "${APP_DIR}:/mriq:rw"
             - "./docker/php/entrypoint.sh:/tmp/entrypoint.sh"
-        # logging:
-        #     driver: "syslog"
-        #     options:
-        #         syslog-facility: "local0"
-        #         tag: "mbriqs-php"
+        logging:
+            driver: "syslog"
+            options:
+                syslog-facility: "local0"
+                tag: "mriq-php"
 
     mysql:
         image: mysql:5.6
-        container_name: "mbriqs-mysql"
+        container_name: "mriq-mysql"
         environment:
             - MYSQL_DATA_DIR
             - MYSQL_ROOT_PASSWORD
@@ -47,9 +47,8 @@ services:
             - 127.0.0.1:3306:3306
         volumes:
             - "${MYSQL_DATA_DIR}:/var/lib/mysql"
-            - "${MYSQL_BCKP_DIR}:/var/backup"
-        # logging:
-        #     driver: "syslog"
-        #     options:
-        #         syslog-facility: "local0"
-        #         tag: "mbriqs-mysql"
+        logging:
+            driver: "syslog"
+            options:
+                syslog-facility: "local0"
+                tag: "mriq-mysql"

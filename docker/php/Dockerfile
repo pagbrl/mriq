@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y \
     git \
     unzip \
     wget \
+    jq \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get autoremove -y
 
