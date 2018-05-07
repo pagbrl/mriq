@@ -61,18 +61,19 @@ class DefaultController extends Controller
             /** @var Transaction $transaction */
             $transaction = $mriqManager->treatMriqs($giver, $receiver, $amount, $reason);
 
-            $confirmGiverString = $transaction->getWereLastMriqs() ?
-                sprintf(
-                    "You gave your last *%s* mriqs to *@%s* ! Thanks for spreading the love 💌",
-                    $amount,
-                    $receiver->getSlackName()
-                )
+            $confirmGiverStringPattern = $transaction->getWereLastMriqs() ?
+                "%s gave their last *%s* mriqs to *@%s* : %s"
                 :
-                sprintf(
-                    "You gave *%s* mriqs to *@%s* ! Thanks for spreading the love 💌",
-                    $amount,
-                    $receiver->getSlackName()
-                );
+                "%s gave *%s* mriqs to *@%s* : %s"
+            ;
+
+            $confirmGiverString = sprintf(
+                $confirmGiverStringPattern,
+                $giver->getSlackName(),
+                $amount,
+                $receiver->getSlackName(),
+                $reason
+            )
 
             $confirmReceiverString = $transaction->getWereLastMriqs() ?
                 sprintf(
@@ -159,8 +160,9 @@ class DefaultController extends Controller
 
             $transaction->setMriqSlackbotMessageTs($receiverSlackbotMessage['ts']);
 
-            //Sending confirmation for the giver
-            $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $confirmGiverString, $giver->getSlackId());
+            //Sending confirmation to the whole channel
+//            $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $confirmGiverString, $giver->getSlackId());
+            $slackManager->sendMessage($slackPayload['channel_id'], $confirmGiverString);
 
 
 
