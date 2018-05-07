@@ -62,23 +62,23 @@ class DefaultController extends Controller
             $transaction = $mriqManager->treatMriqs($giver, $receiver, $amount, $reason);
 
             $confirmGiverStringPattern = $transaction->getWereLastMriqs() ?
-                "%s gave their last *%s* mriqs to *@%s* : %s"
+                "%s gave their last *%smq* to *@%s* : %s"
                 :
-                "%s gave *%s* mriqs to *@%s* : %s"
+                "%s gave *%smq* to *@%s* : %s"
             ;
 
             $confirmGiverString = sprintf(
                 $confirmGiverStringPattern,
-                $giver->getSlackName(),
+                $giver->getSlackMentionnableName(),
                 $amount,
-                $receiver->getSlackName(),
+                $receiver->getSlackMentionnableName(),
                 $reason
             );
 
             $confirmReceiverString = $transaction->getWereLastMriqs() ?
                 sprintf(
                     "*@%s* just gave you their last *%smriqs* (You now have %smq)",
-                    $giver->getSlackName(),
+                    $giver->getSlackMentionnableName(),
                     $amount,
                     $receiver->getTotalEarned()
                 )
@@ -86,7 +86,7 @@ class DefaultController extends Controller
                 sprintf(
                     "You just received *%smq* from *@%s* (You now have %smq)",
                     $amount,
-                    $giver->getSlackName(),
+                    $giver->getSlackMentionnableName(),
                     $receiver->getTotalEarned()
                 );
 
@@ -126,9 +126,9 @@ class DefaultController extends Controller
 
             $logToMriqChannelString = sprintf(
                 "*@%s* gave %smq to *@%s*",
-                $giver->getSlackName(),
+                $giver->getSlackMentionnableName(),
                 $amount,
-                $receiver->getSlackName(),
+                $receiver->getSlackMentionnableName(),
                 $reason
             );
 
@@ -198,7 +198,7 @@ class DefaultController extends Controller
 
             $string = sprintf(
                 "Hey *@%s*, you currently have *%smq* left to give and received *%smq* total ! \n Time to spread some love 💖",
-                $user->getSlackName(),
+                $user->getSlackMentionnableName(),
                 $user->getToGive(),
                 $user->getTotalEarned()
             );
@@ -264,7 +264,7 @@ class DefaultController extends Controller
 
             $receiverSlackbotString = sprintf(
                 '*@%s* gave you *%smq* (You now have %smq)',
-                $transaction->getGiver()->getSlackName(),
+                $transaction->getGiver()->getSlackMentionnableName(),
                 $transaction->getAmount(),
                 $transaction->getReceiver()->getTotalEarned()
             );
@@ -272,31 +272,31 @@ class DefaultController extends Controller
             $giverSlackbotAttachments = array(
                 0 => array('text' => sprintf(
                     '*@%s* gave %smq to *@%s*',
-                    $transaction->getGiver()->getSlackName(),
+                    $transaction->getGiver()->getSlackMentionnableName(),
                     $transaction->getAmount(),
-                    $transaction->getReceiver()->getSlackName()
+                    $transaction->getReceiver()->getSlackMentionnableName()
                 )),
                 1 => array('text' => $transaction->getReason())
             );
 
             $giverSlackbotString = sprintf(
                 '*@%s* reacted with :%s:',
-                $transaction->getReceiver()->getSlackName(),
+                $transaction->getReceiver()->getSlackMentionnableName(),
                 $transaction->getReaction()
             );
 
             $logMessageString = sprintf(
                 '*@%s* gave %smq to *@%s*',
-                $transaction->getGiver()->getSlackName(),
+                $transaction->getGiver()->getSlackMentionnableName(),
                 $transaction->getAmount(),
-                $transaction->getReceiver()->getSlackName()
+                $transaction->getReceiver()->getSlackMentionnableName()
             );
 
             $logMessageAttachments = array(
                 0 => array('text' => $transaction->getReason()),
                 1 => array('text' => sprintf(
                     '*@%s* reacted with :%s:',
-                    $transaction->getReceiver()->getSlackName(),
+                    $transaction->getReceiver()->getSlackMentionnableName(),
                     $transaction->getReaction()
                 ))
             );

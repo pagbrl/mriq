@@ -239,4 +239,15 @@ class User
         $this->setToGive($newToGive);
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getSlackMentionnableName()
+    {
+        return sprintf(
+            '<@%s>',
+            $this->getSlackId()
+        );
+    }
 }
