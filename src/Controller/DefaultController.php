@@ -73,7 +73,7 @@ class DefaultController extends Controller
                 $amount,
                 $receiver->getSlackName(),
                 $reason
-            )
+            );
 
             $confirmReceiverString = $transaction->getWereLastMriqs() ?
                 sprintf(
@@ -161,10 +161,7 @@ class DefaultController extends Controller
             $transaction->setMriqSlackbotMessageTs($receiverSlackbotMessage['ts']);
 
             //Sending confirmation to the whole channel
-//            $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $confirmGiverString, $giver->getSlackId());
             $slackManager->sendMessage($slackPayload['channel_id'], $confirmGiverString);
-
-
 
             $em->persist($transaction);
             $em->flush();
