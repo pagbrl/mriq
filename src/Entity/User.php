@@ -243,7 +243,7 @@ class User
     /**
      * @return string
      */
-    public function getSlackMentionnableName()
+    public function getSlackMentionableName()
     {
         return sprintf(
             '<@%s>',
