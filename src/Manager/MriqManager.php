@@ -76,6 +76,7 @@ class MriqManager
                     ->setSlackId($rawUser['id'])
                     ->setSlackName($slackName)
                     ->setSlackRealName($rawUser['profile']['real_name_normalized'])
+                    ->setEmail($rawUser['profile']['email'])
                 ;
 
                 $this->em->persist($user);

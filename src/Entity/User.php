@@ -36,6 +36,12 @@ class User
     private $slackRealName;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $email;
+
+    /**
      * @var int
      * @ORM\Column(type="integer", nullable=false)
      */
@@ -249,5 +255,23 @@ class User
             '<@%s>',
             $this->getSlackId()
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     * @return User
+     */
+    public function setEmail(string $email): User
+    {
+        $this->email = $email;
+        return $this;
     }
 }
