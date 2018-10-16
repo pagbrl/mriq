@@ -45,15 +45,16 @@ class SayAnythingCommand extends Command
     {
         $this
             ->setDescription('Says things')
-            ->addArgument('thing', InputArgument::REQUIRED)
             ->addArgument('channel', InputArgument::REQUIRED)
-            ->addArgument('users', InputArgument::OPTIONAL)
+            ->addArgument('users', InputArgument::OPTIONAL | InputArgument::OPTIONAL)
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
+
+        $inputString = $io->ask('Text to say ?');
 
         $channel = $this->slackManager->retrieveChannel($input->getArgument('channel'));
         if (null === $channel) {
@@ -71,16 +72,16 @@ class SayAnythingCommand extends Command
                 }
             }
 
-            if (substr_count($input->getArgument('thing'), '%s') === count($users)) {
+            if (substr_count($inputString, '%s') === count($users)) {
                 $rawString = vsprintf(
-                    $input->getArgument('thing'),
+                    $inputString,
                     $users
                 );
             } else {
                 throw new BadRequestHttpException('Users number didn\'t match expected');
             }
         } else {
-            $rawString = $input->getArgument('thing');
+            $rawString = $inputString;
         }
 
         $this->slackManager->sendMessage(
