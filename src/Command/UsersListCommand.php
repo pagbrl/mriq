@@ -50,7 +50,10 @@ class UsersListCommand extends Command
             'Id',
             'Slack id',
             'Slack name',
-            'Slack real name'
+            'Slack real name',
+            'Mriqs left',
+            'Mriqs given',
+            'Mriqs received',
         ];
         $usersList = [];
         /** @var User $user */
@@ -59,7 +62,10 @@ class UsersListCommand extends Command
                 $user->getId(),
                 $user->getSlackId(),
                 $user->getSlackName(),
-                $user->getSlackRealName()
+                $user->getSlackRealName(),
+                $user->getToGive(),
+                $user->getTotalGiven(),
+                $user->getTotalEarned(),
             ];
 
             if ($input->getOption('email')) {
