@@ -68,7 +68,7 @@ class UsersListCommand extends Command
         /** @var User $user */
         foreach ($users as $index => $user) {
             $usersList[] = [
-                sprintf('#%s', $index),
+                sprintf('#%s', bcadd($index, 1)),
                 $user->getId(),
                 $user->getSlackId(),
                 $user->getSlackName(),
