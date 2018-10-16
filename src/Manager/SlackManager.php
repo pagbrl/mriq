@@ -104,4 +104,15 @@ class SlackManager
             'as_user' => false
         ))->getBody()->getContents();
     }
+
+    public function retrieveChannel(string $channelName)
+    {
+        $channels = json_decode($this->call('channels.list')->getBody()->getContents(), false);
+        foreach ($channels as $channel) {
+            if ($channel['name'] === $channelName) {
+                return $channel['id'];
+            }
+        }
+        return null;
+    }
 }
