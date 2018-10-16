@@ -61,7 +61,7 @@ class SayAnythingCommand extends Command
             throw new BadRequestHttpException('No such channel was found.');
         }
 
-        if (!empty($input->getArgument('users')) {
+        if (!empty($input->getArgument('users'))) {
             $users = [];
             $rawUsers = $input->getArgument('users');
             foreach ($rawUsers as $rawUser) {
