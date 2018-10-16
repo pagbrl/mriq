@@ -46,7 +46,7 @@ class SayAnythingCommand extends Command
         $this
             ->setDescription('Says things')
             ->addArgument('channel', InputArgument::REQUIRED)
-            ->addArgument('users', InputArgument::OPTIONAL | InputArgument::OPTIONAL)
+            ->addArgument('users', InputArgument::IS_ARRAY | InputArgument::OPTIONAL)
         ;
     }
 
@@ -61,9 +61,9 @@ class SayAnythingCommand extends Command
             throw new BadRequestHttpException('No such channel was found.');
         }
 
-        if (null !== $input->getArgument('users')) {
+        if (!empty($input->getArgument('users')) {
             $users = [];
-            $rawUsers = str_split($input->getArgument('users'), ',');
+            $rawUsers = $input->getArgument('users');
             foreach ($rawUsers as $rawUser) {
                 /** @var User $user */
                 $user = $this->em->getRepository(User::class)->findOneBySlackName($rawUser);
