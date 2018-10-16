@@ -37,6 +37,7 @@ class UsersListCommand extends Command
         $this
             ->setDescription('Lists users')
             ->addOption('--email')
+            ->addOption('--leader')
         ;
     }
 
@@ -44,7 +45,10 @@ class UsersListCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $users = $this->em->getRepository(User::class)->findAll();
+        $input->getOption('leader') ?
+            $users = $this->em->getRepository(User::class)->findLeaderBoard()
+            :
+            $users = $this->em->getRepository(User::class)->findAll();
 
         $usersListHeaders = [
             'Id',

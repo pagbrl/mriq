@@ -42,4 +42,13 @@ class UserRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findLeaderBoard()
+    {
+        return $this->createQueryBuilder('u')
+            ->orderBy('u.totalEarned', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
