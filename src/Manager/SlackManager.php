@@ -107,7 +107,8 @@ class SlackManager
 
     public function retrieveChannel(string $channelName)
     {
-        $channels = json_decode($this->call('channels.list')->getBody()->getContents(), false);
+        $channels = json_decode($this->call('channels.list')->getBody()->getContents(), false)['channels'];
+        var_dump($channels)
         foreach ($channels as $channel) {
             if ($channel['name'] === $channelName) {
                 return $channel['id'];
