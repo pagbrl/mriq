@@ -55,6 +55,7 @@ class UsersListCommand extends Command
         }
 
         $usersListHeaders = [
+            'Rank',
             'Id',
             'Slack id',
             'Slack name',
@@ -65,8 +66,9 @@ class UsersListCommand extends Command
         ];
         $usersList = [];
         /** @var User $user */
-        foreach ($users as $user) {
+        foreach ($users as $index => $user) {
             $usersList[] = [
+                sprintf('#%s', $index),
                 $user->getId(),
                 $user->getSlackId(),
                 $user->getSlackName(),
