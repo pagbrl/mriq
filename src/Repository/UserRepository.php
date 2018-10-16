@@ -51,4 +51,13 @@ class UserRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function findGiverBoard()
+    {
+        return $this->createQueryBuilder('u')
+            ->orderBy('u.totalGiven', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
