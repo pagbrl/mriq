@@ -50,14 +50,14 @@ class SayAnythingCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $channel = 'C02994B3R';
+        $channel = 'C605WUD09';
 
         /** @var User $user */
-        $user = $this->em->getRepository(User::class)->findOneById(10);
+        $user = $this->em->getRepository(User::class)->findOneById(51);
 
         $this->slackManager->sendMessage(
             $channel,
-            sprintf('%s, please stop impersonating me 😏.', $user->getSlackMentionableName())
+            sprintf('%s, I am perfect.', $user->getSlackMentionableName())
         );
         $this->em->flush();
     }
