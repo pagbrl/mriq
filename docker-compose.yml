@@ -15,12 +15,6 @@ services:
         depends_on:
             - php-fpm
             - mysql
-#        logging:
-#            driver: "syslog"
-#            options:
-#                syslog-facility: "local0"
-#                tag: "mriq-nginx"
-
     php-fpm:
         build: ./docker/php
         container_name: "mriq-php"
@@ -31,11 +25,6 @@ services:
         volumes:
             - "${APP_DIR}:/mriq:rw"
             - "./docker/php/entrypoint.sh:/tmp/entrypoint.sh"
-#        logging:
-#            driver: "syslog"
-#            options:
-#                syslog-facility: "local0"
-#                tag: "mriq-php"
 
     mysql:
         image: mysql:5.6
@@ -47,8 +36,3 @@ services:
             - 127.0.0.1:3306:3306
         volumes:
             - "${MYSQL_DATA_DIR}:/var/lib/mysql"
-#        logging:
-#            driver: "syslog"
-#            options:
-#                syslog-facility: "local0"
-#                tag: "mriq-mysql"

@@ -8,12 +8,11 @@ use App\Manager\MriqManager;
 use App\Manager\SlackManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends Controller
 {
@@ -28,8 +27,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/treat", name="treat")
-     * @Method({"POST"})
+     * @Route("/treat", name="treat", methods={"POST"})
      */
     public function treatAction(
         LoggerInterface $logger,
@@ -178,8 +176,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/mriq", name="mriq")
-     * @Method({"POST"})
+     * @Route("/mriq", name="mriq", methods={"POST"})
      */
     public function mriqAction(
         EntityManagerInterface $em,
@@ -217,8 +214,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/reaction", name="reaction")
-     * @Method({"POST"})
+     * @Route("/reaction", name="reaction", methods={"POST"})
      */
     public function reactionAction(
         LoggerInterface $logger,
