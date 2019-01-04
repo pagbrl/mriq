@@ -3,4 +3,4 @@ monolog:
         main:
             type:  stream
             path: "php://stderr"
-            level: info
+            level: notice
