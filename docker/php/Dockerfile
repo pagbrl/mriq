@@ -3,16 +3,10 @@ FROM php:7.1-fpm
 RUN apt-get update && apt-get install -y \
     git \
     vim \
-    curl \
     unzip \
-    wget \
-    jq \
+    curl \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get autoremove -y
-
-RUN echo 'deb http://ftp.debian.org/debian jessie-backports main' >> /etc/apt/sources.list \
-    && apt-get update \
-    && apt-get install -y certbot -t jessie-backports
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
