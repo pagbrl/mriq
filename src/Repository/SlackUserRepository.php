@@ -4,11 +4,11 @@ namespace App\Repository;
 
 use App\Entity\SlackUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry as RegistryInterface;
 
 /**
- * @method SlackUser|null find($id, $lockMode = null, $lockVersion = null)
- * @method SlackUser|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|SlackUser find($id, $lockMode = null, $lockVersion = null)
+ * @method null|SlackUser findOneBy(array $criteria, array $orderBy = null)
  * @method SlackUser[]    findAll()
  * @method SlackUser[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */

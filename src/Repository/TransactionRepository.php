@@ -4,11 +4,11 @@ namespace App\Repository;
 
 use App\Entity\Transaction;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry as RegistryInterface;
 
 /**
- * @method Transaction|null find($id, $lockMode = null, $lockVersion = null)
- * @method Transaction|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Transaction find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Transaction findOneBy(array $criteria, array $orderBy = null)
  * @method Transaction[]    findAll()
  * @method Transaction[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */

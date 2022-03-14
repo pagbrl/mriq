@@ -8,17 +8,17 @@ use App\Manager\MriqManager;
 use App\Manager\SlackManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DefaultController extends Controller
+class DefaultController extends AbstractController
 {
-
     /**
      * @Route("/")
+     *
      * @return JsonResponse
      */
     public function indexAction()
@@ -49,10 +49,13 @@ class DefaultController extends Controller
             $mriqChannelId = $this->getParameter('mriq_channel_id');
 
             $parsedData = $mriqManager->parseSlackTreatText($slackPayload['text']);
+
             /** @var User $receiver */
             $receiver = $parsedData['user'];
+
             /** @var int $amount */
             $amount = $parsedData['amount'];
+
             /** @var string $reason */
             $reason = $parsedData['reason'];
 
@@ -60,9 +63,9 @@ class DefaultController extends Controller
             $transaction = $mriqManager->treatMriqs($giver, $receiver, $amount, $reason);
 
             $confirmGiverStringPattern = $transaction->getWereLastMriqs() ?
-                "%s gave their last *%smq* to *%s* : %s"
+                '%s gave their last *%smq* to *%s* : %s'
                 :
-                "%s gave *%smq* to *%s* : %s"
+                '%s gave *%smq* to *%s* : %s'
             ;
 
             $confirmGiverString = sprintf(
@@ -75,66 +78,65 @@ class DefaultController extends Controller
 
             $confirmReceiverString = $transaction->getWereLastMriqs() ?
                 sprintf(
-                    "*%s* just gave you their last *%smriqs* (You now have %smq)",
+                    '*%s* just gave you their last *%smriqs* (You now have %smq)',
                     $giver->getSlackMentionableName(),
                     $amount,
                     $receiver->getTotalEarned()
                 )
                 :
                 sprintf(
-                    "You just received *%smq* from *%s* (You now have %smq)",
+                    'You just received *%smq* from *%s* (You now have %smq)',
                     $amount,
                     $giver->getSlackMentionableName(),
                     $receiver->getTotalEarned()
                 );
 
-            $receiverActionAttachment = array(
-                0 => array(
+            $receiverActionAttachment = [
+                0 => [
                     'text' => $reason,
                     'callback_id' => 'reaction',
-                    'actions' => array(
-                        0 => array(
+                    'actions' => [
+                        0 => [
                             'name' => 'reaction',
                             'text' => '❤️',
                             'type' => 'button',
-                            'value' => Transaction::REACTION_HEART
-                        ),
-                        1 => array(
+                            'value' => Transaction::REACTION_HEART,
+                        ],
+                        1 => [
                             'name' => 'reaction',
                             'text' => '😂',
                             'type' => 'button',
-                            'value' => Transaction::REACTION_JOY
-                        ),
-                        2 => array(
+                            'value' => Transaction::REACTION_JOY,
+                        ],
+                        2 => [
                             'name' => 'reaction',
                             'text' => '👍',
                             'type' => 'button',
-                            'value' => Transaction::REACTION_THUMBSUP
-                        ),
-                        3 => array(
+                            'value' => Transaction::REACTION_THUMBSUP,
+                        ],
+                        3 => [
                             'name' => 'reaction',
                             'text' => '💩',
                             'type' => 'button',
-                            'value' => Transaction::REACTION_POOP
-                        )
-                    )
-
-                )
-            );
+                            'value' => Transaction::REACTION_POOP,
+                        ],
+                    ],
+                ],
+            ];
 
             $logToMriqChannelString = sprintf(
-                "*%s* gave %smq to *%s*",
+                '*%s* gave %smq to *%s*',
                 $giver->getSlackMentionableName(),
                 $amount,
                 $receiver->getSlackMentionableName(),
                 $reason
             );
 
-            $reasonAttachment = array(
-                0 => array('text' => $reason)
-            );
+            $reasonAttachment = [
+                0 => ['text' => $reason],
+            ];
 
-            //Logging the activity to the mriq channel
+            // Logging the activity to the mriq channel
             $mriqChannelMessage = json_decode(
                 $slackManager->sendMessage(
                     $mriqChannelId,
@@ -146,7 +148,7 @@ class DefaultController extends Controller
 
             $transaction->setMriqChannelMessageTs($mriqChannelMessage['ts']);
 
-            //Sending good news to the receiver
+            // Sending good news to the receiver
             $receiverSlackbotMessage = json_decode(
                 $slackManager->sendMessage(
                     $receiver->getSlackId(),
@@ -158,13 +160,13 @@ class DefaultController extends Controller
 
             $transaction->setMriqSlackbotMessageTs($receiverSlackbotMessage['ts']);
 
-            //Sending confirmation to the whole channel
+            // Sending confirmation to the whole channel
             $slackManager->sendMessage($slackPayload['channel_id'], $confirmGiverString);
 
             $em->persist($transaction);
             $em->flush();
         } catch (\Exception $e) {
-            $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : $e->getMessage();
+            $errorMessage = '' == $e->getMessage() ? 'Whoops, something went wrong 🙈' : $e->getMessage();
             $slackManager->sendEphemeralMessage(
                 $slackPayload['channel_id'],
                 $errorMessage,
@@ -202,7 +204,7 @@ class DefaultController extends Controller
 
             $slackManager->sendEphemeralMessage($slackPayload['channel_id'], $string, $user->getSlackId());
         } catch (\Exception $e) {
-            $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : $e->getMessage();
+            $errorMessage = '' == $e->getMessage() ? 'Whoops, something went wrong 🙈' : $e->getMessage();
             $slackManager->sendEphemeralMessage(
                 $slackPayload['channel_id'],
                 $errorMessage,
@@ -223,16 +225,16 @@ class DefaultController extends Controller
         SlackManager $slackManager,
         Request $request
     ) {
-
         $slackPayload = json_decode($request->request->get('payload'), true);
 
         $logger->debug(json_encode($slackPayload));
 
         try {
-            //Update transaction object
+            // Update transaction object
             /** @var Transaction $transaction */
             $transaction = $em->getRepository(Transaction::class)
-                ->findOneByMriqSlackbotMessageTs($slackPayload['original_message']['ts']);
+                ->findOneByMriqSlackbotMessageTs($slackPayload['original_message']['ts'])
+            ;
 
             if (null == $transaction) {
                 throw new \Exception('Whoops, I could not find the transaction you are trying to react to 🤔');
@@ -250,13 +252,13 @@ class DefaultController extends Controller
                 throw new \Exception('Wow, this is an unexpected reaction !');
             }
 
-            $receiverSlackbotAttachments = array(
-                0 => array('text' => $transaction->getReason()),
-                1 => array('text' => sprintf(
+            $receiverSlackbotAttachments = [
+                0 => ['text' => $transaction->getReason()],
+                1 => ['text' => sprintf(
                     'You reacted with :%s:',
                     $transaction->getReaction()
-                ))
-            );
+                )],
+            ];
 
             $receiverSlackbotString = sprintf(
                 '*%s* gave you *%smq* (You now have %smq)',
@@ -265,15 +267,15 @@ class DefaultController extends Controller
                 $transaction->getReceiver()->getTotalEarned()
             );
 
-            $giverSlackbotAttachments = array(
-                0 => array('text' => sprintf(
+            $giverSlackbotAttachments = [
+                0 => ['text' => sprintf(
                     '*%s* gave %smq to *%s*',
                     $transaction->getGiver()->getSlackMentionableName(),
                     $transaction->getAmount(),
                     $transaction->getReceiver()->getSlackMentionableName()
-                )),
-                1 => array('text' => $transaction->getReason())
-            );
+                )],
+                1 => ['text' => $transaction->getReason()],
+            ];
 
             $giverSlackbotString = sprintf(
                 '*%s* reacted with :%s:',
@@ -288,30 +290,30 @@ class DefaultController extends Controller
                 $transaction->getReceiver()->getSlackMentionableName()
             );
 
-            $logMessageAttachments = array(
-                0 => array('text' => $transaction->getReason()),
-                1 => array('text' => sprintf(
+            $logMessageAttachments = [
+                0 => ['text' => $transaction->getReason()],
+                1 => ['text' => sprintf(
                     '*%s* reacted with :%s:',
                     $transaction->getReceiver()->getSlackMentionableName(),
                     $transaction->getReaction()
-                ))
-            );
+                )],
+            ];
 
-            //Respond to message directly to update message in receiver's slackbot
+            // Respond to message directly to update message in receiver's slackbot
             $slackManager->respondToAction(
                 $slackPayload['response_url'],
                 $receiverSlackbotString,
                 $receiverSlackbotAttachments
             );
 
-            //Notify giver of reaction
+            // Notify giver of reaction
             $slackManager->sendMessage(
                 $transaction->getGiver()->getSlackId(),
                 $giverSlackbotString,
                 $giverSlackbotAttachments
             );
 
-            //Update log message in #mriq
+            // Update log message in #mriq
             $response = $slackManager->updateChat(
                 $transaction->getMriqChannelMessageTs(),
                 $this->getParameter('mriq_channel_id'),
@@ -324,7 +326,7 @@ class DefaultController extends Controller
             $em->persist($transaction);
             $em->flush();
         } catch (\Exception $e) {
-            $errorMessage = $e->getMessage() == "" ? 'Whoops, something went wrong 🙈' : $e->getMessage();
+            $errorMessage = '' == $e->getMessage() ? 'Whoops, something went wrong 🙈' : $e->getMessage();
             $slackManager->sendEphemeralMessage(
                 $slackPayload['channel']['id'],
                 $errorMessage,
