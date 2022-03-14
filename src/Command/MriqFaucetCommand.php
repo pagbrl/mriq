@@ -3,12 +3,9 @@
 namespace App\Command;
 
 use App\Entity\User;
-use App\Manager\MriqManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -33,8 +30,6 @@ class MriqFaucetCommand extends Command
 
     /**
      * MriqFaucetCommand constructor.
-     * @param EntityManagerInterface $em
-     * @param int $maxMriqAmount
      */
     public function __construct(EntityManagerInterface $em, int $maxMriqAmount, int $faucetAmount)
     {
@@ -62,7 +57,7 @@ class MriqFaucetCommand extends Command
         foreach ($users as $user) {
             $user->updateToGive($this->faucetAmount);
             $this->em->persist($user);
-            $count++;
+            ++$count;
         }
 
         $io->success(sprintf(

@@ -1,7 +1,6 @@
 <?php
 
 use App\Kernel;
-use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,8 +19,6 @@ $debug = $_SERVER['APP_DEBUG'] ?? ('prod' !== $env);
 
 if ($debug) {
     umask(0000);
-
-    Debug::enable();
 }
 
 if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
