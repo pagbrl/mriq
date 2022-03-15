@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mriq-deployment
+  labels:
+    app: mriq
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mriq
+  template:
+    metadata:
+      labels:
+        app: mriq
+    spec:
+      containers:
+      - name: nginx-mriq
+        image: nginx:1-alpine
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512M
+          limits:
+            cpu: 250m
+            memory: 512M
+        volumeMounts:
+          - name: nginx-config
+            mountPath: /etc/nginx/conf.d
+      - name: php-mriq
+        image: pauulog/monimage-prod:latest
+        env:
+          - name: MARIADB_USER
+            value: mriq
+          - name: MARIADB_DATABASE
+            value: mriq
+          - name: APP_ENV
+            value: dev
+          - name: APP_SECRET
+            value: fdsjklfdjsklfjdklsf
+          - name: SLACK_TOKEN
+            value: fjdsklfjdkls
+          - name: DATABASE_URL
+            value: "mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@mariadb.host:3306/${MARIADB_DATABASE}"
+          - name: MAX_TRANSACTION_AMOUNT
+            value: "6"
+          - name: MAX_MRIQ_AMOUNT
+            value: "42"
+          - name: FAUCET_AMOUNT
+            value: "1"
+          - name: MRIQ_CHANNEL_ID
+            value: "#fjdksl"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512M
+          limits:
+            cpu: 250m
+            memory: 512M
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: mriq-configmap
+          items:
+          - key: nginx-config
+            path: site.conf
