@@ -17,18 +17,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class DefaultController extends AbstractController
 {
     /**
-     * @Route("/")
      *
      * @return JsonResponse
      */
+    #[Route('/', name: 'index')]
     public function indexAction()
     {
         return new JsonResponse('Greetings stranger, I am Mriq, it is nice meeting you !');
     }
 
-    /**
-     * @Route("/treat", name="treat", methods={"POST"})
-     */
+    #[Route("/treat", name: "treat", methods: ["POST"])]
     public function treatAction(
         LoggerInterface $logger,
         EntityManagerInterface $em,
@@ -65,8 +63,7 @@ class DefaultController extends AbstractController
             $confirmGiverStringPattern = $transaction->getWereLastMriqs() ?
                 '%s gave their last *%smq* to *%s* : %s'
                 :
-                '%s gave *%smq* to *%s* : %s'
-            ;
+                '%s gave *%smq* to *%s* : %s';
 
             $confirmGiverString = sprintf(
                 $confirmGiverStringPattern,
@@ -138,7 +135,7 @@ class DefaultController extends AbstractController
 
             // Logging the activity to the mriq channel
             $mriqChannelMessage = json_decode(
-                $slackManager->sendMessage(
+                $slackManager->sendSyncMessage(
                     $mriqChannelId,
                     $logToMriqChannelString,
                     $reasonAttachment
@@ -150,7 +147,7 @@ class DefaultController extends AbstractController
 
             // Sending good news to the receiver
             $receiverSlackbotMessage = json_decode(
-                $slackManager->sendMessage(
+                $slackManager->sendSyncMessage(
                     $receiver->getSlackId(),
                     $confirmReceiverString,
                     $receiverActionAttachment
@@ -177,9 +174,7 @@ class DefaultController extends AbstractController
         return new Response();
     }
 
-    /**
-     * @Route("/mriq", name="mriq", methods={"POST"})
-     */
+    #[Route("/mriq", name: "mriq", methods: ["POST"])]
     public function mriqAction(
         EntityManagerInterface $em,
         MriqManager $mriqManager,
@@ -215,9 +210,7 @@ class DefaultController extends AbstractController
         return new Response();
     }
 
-    /**
-     * @Route("/reaction", name="reaction", methods={"POST"})
-     */
+    #[Route("/reaction", name: "reaction", methods: ["POST"])]
     public function reactionAction(
         LoggerInterface $logger,
         EntityManagerInterface $em,
@@ -233,8 +226,7 @@ class DefaultController extends AbstractController
             // Update transaction object
             /** @var Transaction $transaction */
             $transaction = $em->getRepository(Transaction::class)
-                ->findOneByMriqSlackbotMessageTs($slackPayload['original_message']['ts'])
-            ;
+                ->findOneByMriqSlackbotMessageTs($slackPayload['original_message']['ts']);
 
             if (null == $transaction) {
                 throw new \Exception('Whoops, I could not find the transaction you are trying to react to 🤔');

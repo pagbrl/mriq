@@ -6,67 +6,43 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
+#[ORM\Entity(repositoryClass: "App\Repository\UserRepository")]
 class User
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=10, unique=true, nullable=false)
-     */
+    #[ORM\Column(type: "string", length: 10, unique: true, nullable: false)]
     private $slackId;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", nullable=false)
-     */
+    #[ORM\Column(type: "string", nullable: false)]
     private $slackName;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", nullable=false)
-     */
+    #[ORM\Column(type: "string", nullable: false)]
     private $slackRealName;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: "string", nullable: true)]
     private $email;
 
-    /**
-     * @var int
-     * @ORM\Column(type="integer", nullable=false)
-     */
+    #[ORM\Column(type: "integer", nullable: false)]
     private $totalGiven = 0;
 
-    /**
-     * @var int
-     * @ORM\Column(type="integer", nullable=false)
-     */
+    #[ORM\Column(type: "integer", nullable: false)]
     private $totalEarned = 0;
 
-    /**
-     * @var int
-     * @ORM\Column(type="integer", nullable=false)
-     */
+    #[ORM\Column(type: "integer", nullable: false)]
     private $toGive = 0;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="giver")
-     */
+    #[ORM\OneToMany(targetEntity: "App\Entity\Transaction", mappedBy: "giver")]
     private $givenTransactions;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="receiver")
      */
+    #[ORM\OneToMany(targetEntity: "App\Entity\Transaction", mappedBy: "receiver")]
     private $receivedTransactions;
 
     /**

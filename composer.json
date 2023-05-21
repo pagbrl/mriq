@@ -12,8 +12,10 @@
         "symfony/framework-bundle": "6.0.*",
         "symfony/http-client": "6.0.*",
         "symfony/maker-bundle": "^1.38",
+        "symfony/messenger": "6.0.*",
         "symfony/monolog-bundle": "^3.7",
         "symfony/proxy-manager-bridge": "6.0.*",
+        "symfony/redis-messenger": "6.0.*",
         "symfony/yaml": "6.0.*"
     },
     "config": {

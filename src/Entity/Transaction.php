@@ -4,9 +4,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\TransactionRepository")
- */
+
+#[ORM\Entity(repositoryClass: "App\Repository\TransactionRepository")]
 class Transaction
 {
 
@@ -22,63 +21,61 @@ class Transaction
     const REACTION_THUMBSUP = 'thumbsup';
     const REACTION_POOP = 'poop';
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
     /**
      * @var User
      * Many Features have One Product.
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="givenTransactions")
-     * @ORM\JoinColumn(name="giver_id", referencedColumnName="id")
-    */
+     */
+    #[ORM\ManyToOne(targetEntity: "App\Entity\User", inversedBy: "givenTransactions")]
+    #[ORM\JoinColumn(name: "giver_id", referencedColumnName: "id")]
     private $giver;
 
     /**
      * @var User
      * Many Features have One Product.
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="receivedTransactions")
-     * @ORM\JoinColumn(name="receiver_id", referencedColumnName="id")
      */
+    #[ORM\ManyToOne(targetEntity: "App\Entity\User", inversedBy: "receivedTransactions")]
+    #[ORM\JoinColumn(name: "receiver_id", referencedColumnName: "id")]
     private $receiver;
 
     /**
      * @var int
-     * @ORM\Column(type="integer", nullable=false)
      */
+    #[ORM\Column(type: "integer", nullable: false)]
     private $amount;
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=false)
      */
+    #[ORM\Column(type: "string", nullable: false)]
     private $reason;
 
     /**
      * @var bool
-     * @ORM\Column(type="boolean", nullable=false)
      */
+    #[ORM\Column(type: "boolean", nullable: false)]
     private $wereLastMriqs = false;
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private $reaction;
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private $mriqChannelMessageTs;
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private $mriqSlackbotMessageTs;
 
     /**
