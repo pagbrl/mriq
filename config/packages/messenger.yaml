@@ -6,7 +6,7 @@ framework:
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             async:
-                dns: "%env(MESSENGER_TRANSPORT_DSN)%"
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
                 retry_strategy:
                     max_retries: 3
                     # milliseconds delay

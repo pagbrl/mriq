@@ -163,7 +163,7 @@ Temporary Items
 
 # Musical Guacamole specific
 /web/assets/*
-/_mysql_dir
+/._mysql_data_dir
 .env
 /src/Command/TestAnythingCommand.php
 
@@ -172,6 +172,7 @@ Temporary Items
 /public/bundles/
 /var/
 /vendor/
+
 ###< symfony/framework-bundle ###
 
 src/Command/TestAnythingCommand.php
